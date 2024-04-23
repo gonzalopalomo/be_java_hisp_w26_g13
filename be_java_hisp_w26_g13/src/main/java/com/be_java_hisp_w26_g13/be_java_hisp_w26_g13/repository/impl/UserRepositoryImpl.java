@@ -13,5 +13,24 @@ public class UserRepositoryImpl implements IUserRepository {
 
     public UserRepositoryImpl() {
         this.listUser = new ArrayList<>();
+        initializeUsers();
+    }
+
+    private void initializeUsers() {
+        listUser.add(new User(1, "AliceMorrison"));
+        listUser.add(new User(2, "BobSmith"));
+        listUser.add(new User(3, "CharlieGarcia"));
+        listUser.add(new User(4, "DaisyJohnson"));
+        listUser.add(new User(5, "EdwardWilson"));
+        listUser.add(new User(6, "FionaCampbell"));
+        listUser.add(new User(7, "GeorgeMiller"));
+        listUser.add(new User(8, "HannahScott"));
+        listUser.add(new User(9, "IanPeterson"));
+        listUser.add(new User(10, "JuliaEvans"));
+        listUser.add(new User(11, "KevinBrown"));
+        listUser.add(new User(12, "LauraWhite"));
+        listUser.add(new User(13, "MikeDavis"));
+        listUser.add(new User(14, "NoraBaker"));
+        listUser.add(new User(15, "OscarLee"));
     }
 }
