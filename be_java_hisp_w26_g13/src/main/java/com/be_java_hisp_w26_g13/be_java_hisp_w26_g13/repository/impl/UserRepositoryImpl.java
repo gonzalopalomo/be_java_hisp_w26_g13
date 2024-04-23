@@ -33,4 +33,14 @@ public class UserRepositoryImpl implements IUserRepository {
         listUser.add(new User(14, "NoraBaker"));
         listUser.add(new User(15, "OscarLee"));
     }
+
+    @Override
+    public List<User> getAll() {
+        return listUser;
+    }
+
+    @Override
+    public User findById(int id) {
+        return listUser.stream().filter(user -> user.getUserId() == id).findFirst().orElse(null);
+    }
 }
