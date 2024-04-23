@@ -1,17 +1,12 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
-<<<<<<< Updated upstream
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
-=======
->>>>>>> Stashed changes
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< Updated upstream
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,21 +46,8 @@ public class PostRepositoryImpl implements IPostRepository {
             listPost.add(post);
         }
     }
-=======
-import java.util.ArrayList;
-import java.util.List;
-
-@Repository
-public class PostRepositoryImpl implements IPostRepository {
-    private List<Post> listPost;
-
-    public PostRepositoryImpl() {
-        this.listPost = new ArrayList<>();
-    }
     @Override
     public List<Post> getAll() {
         return listPost;
     }
-
->>>>>>> Stashed changes
 }

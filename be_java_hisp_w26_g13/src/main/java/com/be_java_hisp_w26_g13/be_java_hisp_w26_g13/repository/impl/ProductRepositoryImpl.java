@@ -1,23 +1,14 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl;
-
-<<<<<<< Updated upstream
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
-=======
->>>>>>> Stashed changes
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IProductRepository;
 import org.springframework.stereotype.Repository;
 
-<<<<<<< Updated upstream
 import java.util.ArrayList;
-=======
->>>>>>> Stashed changes
 import java.util.List;
 
 @Repository
 public class ProductRepositoryImpl implements IProductRepository {
 
-<<<<<<< Updated upstream
     private List<Product> listProduct;
 
     public ProductRepositoryImpl() {
@@ -41,7 +32,8 @@ public class ProductRepositoryImpl implements IProductRepository {
 
     public List<Product> getAllProducts() {
         return new ArrayList<>(listProduct);
-=======
+    }
+
     @Override
     public List<Product> getAll() {
         return null;
@@ -50,6 +42,6 @@ public class ProductRepositoryImpl implements IProductRepository {
     @Override
     public Product findById(int id) {
         return null;
->>>>>>> Stashed changes
+
     }
 }
