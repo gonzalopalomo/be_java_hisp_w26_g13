@@ -12,10 +12,15 @@ public class UserController {
     @Autowired
     IUserService iUserService;
 
-    //metodo GET para el us-0003
-    @GetMapping("/{userId}/followers/list")
-    ResponseEntity<?>followersList(@PathVariable int userId){
-        return new ResponseEntity<>( iUserService.getFollowersList(userId), HttpStatus.OK);
+    @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    public ResponseEntity<?> unfollow(@PathVariable int userId, @PathVariable int userIdToUnfollow) {
+        return new ResponseEntity<>(iUserService.unfollow(userId, userIdToUnfollow), HttpStatus.OK);
     }
 
+
+    //metodo GET para el us-0003
+    @GetMapping("/{userId}/followers/list")
+    ResponseEntity<?> followersList(@PathVariable int userId) {
+        return new ResponseEntity<>(iUserService.getFollowersList(userId), HttpStatus.OK);
+    }
 }
