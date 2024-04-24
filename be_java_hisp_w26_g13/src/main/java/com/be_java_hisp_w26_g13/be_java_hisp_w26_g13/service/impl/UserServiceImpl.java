@@ -21,12 +21,20 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     IUserRepository userRepository;
 
+    /**
+     * Use case us-0003's method
+     * @param userId
+     * @return
+     */
     @Override
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException("El usuario no existe en nuestra base de datos");
+        }
+        if (!user.isVendor()){
+            throw new NotFoundException("el usuario no es un vendedor");
         }
         //creo la lista de DTOs de followers para ese user
         List<UserDTO> followerDTOList = new ArrayList<>();
