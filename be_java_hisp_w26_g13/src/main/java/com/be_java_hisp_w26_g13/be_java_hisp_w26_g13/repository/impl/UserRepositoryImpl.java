@@ -1,6 +1,7 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,21 +18,51 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     private void initializeUsers() {
-        listUser.add(new User(1, "AliceMorrison"));
-        listUser.add(new User(2, "BobSmith"));
-        listUser.add(new User(3, "CharlieGarcia"));
-        listUser.add(new User(4, "DaisyJohnson"));
-        listUser.add(new User(5, "EdwardWilson"));
-        listUser.add(new User(6, "FionaCampbell"));
-        listUser.add(new User(7, "GeorgeMiller"));
-        listUser.add(new User(8, "HannahScott"));
-        listUser.add(new User(9, "IanPeterson"));
-        listUser.add(new User(10, "JuliaEvans"));
-        listUser.add(new User(11, "KevinBrown"));
-        listUser.add(new User(12, "LauraWhite"));
-        listUser.add(new User(13, "MikeDavis"));
-        listUser.add(new User(14, "NoraBaker"));
-        listUser.add(new User(15, "OscarLee"));
+        User aliceMorrison = new User(1, "Alice Morrison");
+        User bobSmith = new User(2, "Bob Smith");
+        User charlyGarcia = new User(3, "Charlie Garcia");
+        User daisyJohnson = new User(4, "Daisy Johnson");
+        User edwardWilson = new User(5, "Edward Wilson");
+        User fionaCampbell = new User(6, "Fiona Campbell");
+        User goergeMiller = new User(7, "George Miller");
+        User hannahScott = new User(8, "Hannah Scott");
+        User ianPeterson = new User(9, "Ian Peterson");
+        User juliaEvans = new User(10, "Julia Evans");
+        User kevinBrown = new User(11, "Kevin Brown");
+        User lauraWhite = new User(12, "Laura White");
+        User mikeDavis = new User(13, "Mike Davis");
+        User noraBaker = new User(14, "Nora Baker");
+        User oscarLee = new User(15, "Oscar Lee");
+
+        UserMinimalData minimalBobSmith = new UserMinimalData(2, "Bob Smith");
+        UserMinimalData minimalOscarLee = new UserMinimalData(15, "Oscar Lee");
+        UserMinimalData minimalAliceMorrison = new UserMinimalData(1, "Alice Morrison");
+        UserMinimalData minimalCharlyGarcia = new UserMinimalData(3, "Charlie Garcia");
+
+        aliceMorrison.setFollowed(List.of(minimalBobSmith));
+        aliceMorrison.setFollowers(List.of(minimalOscarLee));
+        bobSmith.setFollowed(List.of(minimalCharlyGarcia));
+        bobSmith.setFollowers(List.of(minimalOscarLee, minimalAliceMorrison));
+        oscarLee.setFollowed(List.of(minimalBobSmith, minimalAliceMorrison));
+        oscarLee.setFollowers(List.of(minimalCharlyGarcia));
+        charlyGarcia.setFollowed(List.of(minimalOscarLee));
+        charlyGarcia.setFollowers(List.of(minimalAliceMorrison, minimalBobSmith));
+
+        listUser.add(aliceMorrison);
+        listUser.add(bobSmith);
+        listUser.add(charlyGarcia);
+        listUser.add(daisyJohnson);
+        listUser.add(edwardWilson);
+        listUser.add(fionaCampbell);
+        listUser.add(goergeMiller);
+        listUser.add(hannahScott);
+        listUser.add(ianPeterson);
+        listUser.add(juliaEvans);
+        listUser.add(kevinBrown);
+        listUser.add(lauraWhite);
+        listUser.add(mikeDavis);
+        listUser.add(noraBaker);
+        listUser.add(oscarLee);
     }
 
     @Override
