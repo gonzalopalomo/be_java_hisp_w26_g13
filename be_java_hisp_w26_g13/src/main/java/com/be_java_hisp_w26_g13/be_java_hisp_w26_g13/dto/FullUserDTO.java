@@ -1,19 +1,21 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto;
 
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import lombok.Data;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO implements Serializable {
+public class FullUserDTO {
     @JsonProperty("user_id")
     private int userId;
     @JsonProperty("user_name")
     private String userName;
+    private List<UserDTO> followers;
+    private List<UserDTO> followed;
 }

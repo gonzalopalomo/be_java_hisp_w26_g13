@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class ResponseFollowDTO {
     @JsonProperty("user_id")
     private int userId;
-    private String mensaje;
+    private String message;
 }
