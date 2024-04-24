@@ -8,4 +8,6 @@ public interface IPostRepository {
 
     List<Post> getAll();
 
+    void create(Post post);
+
 }

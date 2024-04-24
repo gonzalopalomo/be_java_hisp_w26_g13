@@ -10,7 +10,6 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class User {
     private int userId;
     private String userName;
