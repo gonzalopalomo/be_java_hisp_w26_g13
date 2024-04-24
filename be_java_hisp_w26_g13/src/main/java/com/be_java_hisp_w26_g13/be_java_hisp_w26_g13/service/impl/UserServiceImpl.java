@@ -8,8 +8,10 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,22 +21,62 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     IUserRepository userRepository;
 
+
+    /**
+     * Performs the action of unfollowing a user.
+     * @param userId The ID of the user who wants to unfollow another user.
+     * @param userIdToUnfollow The ID of the user to unfollow.
+     * @return ResponseFollowDTO object indicating the success of the operation.
+     */
     @Override
     public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
+
+        unfollowed(userId,userIdToUnfollow);
+        deleteFollower(userId,userIdToUnfollow);
+        return new ResponseFollowDTO(userIdToUnfollow, "Unfollowed");
+    }
+
+    /**
+     * Performs the action of validating if a user exists and if that user has the followed,
+     * and removes it from the list of followed
+     * @param userId The ID of the user who wants to unfollow another user.
+     * @param userIdToUnfollow The ID of the user to unfollow.
+     */
+    private void unfollowed(int userId, int userIdToUnfollow) {
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new NotFoundException("No se encontro el usuario");
+            throw new NotFoundException("User with id " + userId + " does not exist.");
         }
 
-        UserMinimalData userFolled = userRepository.findFollowedById(user, userIdToUnfollow);
-        if (userFolled == null) {
-            throw new NotFoundException("No se encontro el seguidor");
+        UserMinimalData userFollowed = userRepository.findFollowedById(user, userIdToUnfollow);
+        if (userFollowed == null) {
+            throw new BadRequestException("User has not followed");
         }
 
-        userRepository.unfollowFollowed(user, userFolled);
-
-        return new ResponseFollowDTO(userIdToUnfollow, "Se dejo de seguir");
+        userRepository.unfollowed(user, userFollowed);
     }
+
+    /**
+     * Performs the action of validating if a user exists and if that user has the follower,
+     * and removes it from the list of follower
+     * @param userId The ID of the user who wants to unfollow another user.
+     * @param userIdUnfollower The ID of the user to unfollow.
+     */
+    private void deleteFollower(int userId, int userIdUnfollower) {
+        User userFollower = userRepository.findById(userIdUnfollower);
+        UserMinimalData userFollowerMinimal = userRepository.findFollowerById(userFollower, userId);
+
+        if (userFollower == null) {
+            throw new NotFoundException("User with id " + userId + " does not exist.");
+        }
+
+        if (userFollowerMinimal == null) {
+            throw new BadRequestException("User has not follower");
+        }
+
+        userRepository.deleteFollower(userFollower, userFollowerMinimal);
+    }
+
 
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
