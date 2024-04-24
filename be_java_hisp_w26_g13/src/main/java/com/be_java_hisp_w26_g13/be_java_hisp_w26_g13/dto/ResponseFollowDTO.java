@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @NoArgsConstructor
+
 public class ResponseFollowDTO {
     @JsonProperty("user_id")
     private int userId;
-    private String mensaje;
+    private String message;
 }

@@ -1,21 +1,21 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostDTO {
+public class FullUserDTO {
     @JsonProperty("user_id")
     private int userId;
-    private String date;
-    private ProductDTO product;
-    private int category;
-    private double price;
+    @JsonProperty("user_name")
+    private String userName;
+    private List<UserDTO> followers;
+    private List<UserDTO> followed;
 }
