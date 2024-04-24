@@ -61,7 +61,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         if(!user.isVendor()){
-            throw new InvalidOperation("Cannot follow a non-vendor user");
+            throw new InvalidOperation("Non-vendor users do not have followers");
         }
 
         ResponseFollowersCountDTO dto = new ResponseFollowersCountDTO();
