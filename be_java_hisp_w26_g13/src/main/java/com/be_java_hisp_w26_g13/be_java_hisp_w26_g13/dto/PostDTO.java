@@ -14,9 +14,13 @@ import java.time.LocalDate;
 public class PostDTO {
     @JsonProperty("user_id")
     private int userId;
+    @JsonProperty("date")
     @JsonFormat(pattern = "dd-MM-yyyy")
     private String date;
+    @JsonProperty("product")
     private ProductDTO product;
+    @JsonProperty("category")
     private int category;
+    @JsonProperty("price")
     private double price;
 }
