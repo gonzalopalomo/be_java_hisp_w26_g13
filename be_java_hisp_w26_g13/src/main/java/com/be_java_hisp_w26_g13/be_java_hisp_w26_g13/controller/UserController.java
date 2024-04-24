@@ -15,7 +15,7 @@ public class UserController {
     //metodo GET para el us-0003
     @GetMapping("/{userId}/followers/list")
     ResponseEntity<?>followersList(@PathVariable int userId){
-        return new ResponseEntity<>("" + userId, HttpStatus.OK);
+        return new ResponseEntity<>( iUserService.getFollowersList(userId), HttpStatus.OK);
     }
 
 }
