@@ -23,18 +23,22 @@ public class UserServiceImpl implements IUserService {
 
     /**
      * Use case us-0003's method
+     * It searches in userRepository if there are some user with the userId parameter
+     * if there aren't any, then throws a not found exception
+     * if that user hasn't any post, then throws a bad request exception
+     * else add the user id, userName and a list of followed users in followers array from ResponseUserFollowersDTO
      * @param userId
-     * @return
+     * @return responseDTO
      */
     @Override
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new NotFoundException("El usuario no existe en nuestra base de datos");
+            throw new NotFoundException("User have not been found in out database");
         }
         if (!user.isVendor()){
-            throw new NotFoundException("el usuario no es un vendedor");
+            throw new NotFoundException("User is not a vendor");
         }
         //creo la lista de DTOs de followers para ese user
         List<UserDTO> followerDTOList = new ArrayList<>();
