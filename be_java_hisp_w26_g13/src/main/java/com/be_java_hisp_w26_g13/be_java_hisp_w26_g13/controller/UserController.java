@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -36,8 +38,8 @@ public class UserController {
 
     //metodo GET para el us-0003
     @GetMapping("/{userId}/followers/list")
-    ResponseEntity<?> followersList(@PathVariable int userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getFollowersList(userId));
+    ResponseEntity<?> followersList(@PathVariable int userId, @RequestParam Optional<String> order) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getOrderedFollowersList(userId, order));
     }
 
     //metodo GET para el us-0002
@@ -45,5 +47,10 @@ public class UserController {
     ResponseEntity<?> followersCount(@PathVariable int userId){
         return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
     }
+
+    /*@GetMapping("/{userId}/followers/list")
+    public ResponseEntity<?> orderedFollowersList(@PathVariable Integer userId, @RequestParam String order) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getOrderedFollowersList(userId, order));
+    }*/
 
 }

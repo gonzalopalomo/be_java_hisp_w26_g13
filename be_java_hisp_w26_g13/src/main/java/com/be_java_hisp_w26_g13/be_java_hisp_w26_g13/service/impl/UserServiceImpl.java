@@ -16,9 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.ArrayList;
-
+import java.util.*;
 
 
 @Service
@@ -173,7 +171,7 @@ public class UserServiceImpl implements IUserService {
      * @exception NotFoundException on user not found
      * @exception BadRequestException on user is not a vendor
      */
-    public ResponseUserFollowersDTO getFollowersList(int userId) {
+    private ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
@@ -223,5 +221,26 @@ public class UserServiceImpl implements IUserService {
         dto.setFollowersCount(user.getFollowers().size());
 
         return dto;
+    }
+
+    @Override
+    public ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order) {
+        if (order.isEmpty()) {
+            System.out.println("hola");
+            return getFollowersList(userId);
+        }
+
+        ResponseUserFollowersDTO responseUserFollowersDTO = getFollowersList(userId);
+        List<UserDTO> followers = responseUserFollowersDTO.getFollowers();
+
+        if (order.get().equals("name_asc")) {
+            followers.sort(Comparator.comparing(UserDTO::getUserName));
+        } else if (order.get().equals("name_desc")) {
+            followers.sort(Comparator.comparing(UserDTO::getUserName).reversed());
+        } else {
+            throw new BadRequestException("Order should be name_asc or name_desc.");
+        }
+
+        return responseUserFollowersDTO;
     }
 }
