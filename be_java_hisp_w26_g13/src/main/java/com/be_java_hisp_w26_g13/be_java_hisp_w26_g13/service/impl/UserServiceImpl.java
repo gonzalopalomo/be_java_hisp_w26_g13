@@ -5,6 +5,7 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseUserFollowersDT
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.UserDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
@@ -34,15 +35,34 @@ public class UserServiceImpl implements IUserService {
         List<UserMinimalData> followerList = userToFollow.getFollowers();
 
         if (!followedList.contains(userToFollowMinimal) && !followerList.contains(followerMinimal)) {
-            followedList.add(userToFollowMinimal);
-            follower.setFollowed(followedList);
-            followerList.add(followerMinimal);
-            userToFollow.setFollowers(followerList);
+            if (userToFollow.isVendor()) {
+                followedList.add(userToFollowMinimal);
+                follower.setFollowed(followedList);
+                followerList.add(followerMinimal);
+                userToFollow.setFollowers(followerList);
+            } else {
+                throw new BadRequestException("Cannot follow user that is not a vendor.");
+            }
+        } else {
+            throw new BadRequestException("User with id " + follower.getUserId()
+                    + " is already following user with id " + userToFollow.getUserId());
+        }
+    }
+
+
+    private void validateFollowUserData(Integer userId, Integer userIdToFollow) {
+        if (userId == null || userIdToFollow == null) {
+            throw new BadRequestException("The input data is not correctly formatted.");
+        } else if (userId < 0 || userIdToFollow < 0) {
+            throw new BadRequestException("User IDs cannot be negative.");
+        } else if (userId.equals(userIdToFollow)) {
+            throw new BadRequestException("User cannot follow itself.");
         }
     }
 
     @Override
-    public ResponseFollowDTO followUser(int userId, int userIdToFollow) {
+    public ResponseFollowDTO followUser(Integer userId, Integer userIdToFollow) {
+        validateFollowUserData(userId, userIdToFollow);
         User followerUser = userRepository.findById(userId);
         User followedUser = userRepository.findById(userIdToFollow);
         if (followerUser == null) {
