@@ -22,12 +22,11 @@ public class UserServiceImpl implements IUserService {
         }
 
         UserMinimalData userFolled = userRepository.findFollowedById(user, userIdToUnfollow);
-
         if (userFolled == null) {
             throw new NotFoundException("No se encontro el seguidor");
         }
 
-        userRepository.unfollow(user, userFolled);
+        userRepository.unfollowFollowed(user, userFolled);
 
         return new ResponseFollowDTO(userIdToUnfollow,"Se dejo de seguir");
     }
