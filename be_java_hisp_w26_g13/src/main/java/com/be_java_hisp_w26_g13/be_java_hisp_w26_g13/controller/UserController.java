@@ -39,4 +39,11 @@ public class UserController {
     ResponseEntity<?> followersList(@PathVariable int userId) {
         return ResponseEntity.status(HttpStatus.OK).body(iUserService.getFollowersList(userId));
     }
+
+    //metodo GET para el us-0002
+    @GetMapping("/{userId}/followers/count")
+    ResponseEntity<?> followersCount(@PathVariable int userId){
+        return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
+    }
+
 }

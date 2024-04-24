@@ -2,11 +2,12 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.FullUserDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowedByUserDTO;
-
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowersCountDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseUserFollowersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.UserDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseUserFollowersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.InvalidOperation;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
@@ -195,5 +196,32 @@ public class UserServiceImpl implements IUserService {
 
         return responseDTO;
 
+    }
+
+    /**
+     * Retrieves the count of followers for a specified user if they are a vendor.
+     *
+     * @param userId The ID of the user for whom to retrieve the follower count.
+     * @return A {@link ResponseFollowersCountDTO} object containing the user's ID, user's name, and the count of followers.
+     * @throws NotFoundException if no user is found with the given userId.
+     * @throws InvalidOperation if the user identified by userId is not a vendor.
+     */
+    @Override
+    public ResponseFollowersCountDTO getFollowersCount(int userId) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new NotFoundException("User with id " + userId + " does not exist");
+        }
+
+        if(!user.isVendor()){
+            throw new InvalidOperation("User with id " + userId + " is not a vendor user, non-vendor users cannot have followers");
+        }
+
+        ResponseFollowersCountDTO dto = new ResponseFollowersCountDTO();
+        dto.setUserId(user.getUserId());
+        dto.setUserName(user.getUserName());
+        dto.setFollowersCount(user.getFollowers().size());
+
+        return dto;
     }
 }
