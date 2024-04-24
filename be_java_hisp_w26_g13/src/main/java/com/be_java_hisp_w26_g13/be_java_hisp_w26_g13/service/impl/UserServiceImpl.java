@@ -21,14 +21,13 @@ public class UserServiceImpl implements IUserService {
     public ResponseFollowedByUserDTO getFollowedSellers(int userId) {
 
         User user = userRepository.findById(userId);
-        String userName = user.getUserName();
 
         if(user == null){
             throw new NotFoundException("User not found");
         }
         List<User> sellers = user.getFollowed();
 
-        ResponseFollowedByUserDTO response = new ResponseFollowedByUserDTO(userId, userName);
+        ResponseFollowedByUserDTO response = new ResponseFollowedByUserDTO(userId, user.getUserName());
 
         for (User seller : sellers) {
             UserDTO userDTO = convertUserToUserDTO(seller);
