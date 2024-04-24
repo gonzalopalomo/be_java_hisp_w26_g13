@@ -38,14 +38,7 @@ public class UserServiceImpl implements IUserService {
 
         return response;
     }
-
-    /* public UserDTO convertUserToUserDTO(User user) {
-         UserDTO userDTO = new UserDTO();
-         userDTO.setUserId(user.getUserId());
-         userDTO.setUserName(user.getUserName());
-
-         return userDTO;
-     }*/
+    
     @Override
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
