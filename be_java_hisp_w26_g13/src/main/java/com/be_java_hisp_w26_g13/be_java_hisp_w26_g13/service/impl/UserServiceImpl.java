@@ -28,6 +28,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseFollowedByUserDTO getFollowedSellers(int userId) {
 
+
         User user = userRepository.findById(userId);
 
         if(user == null){
@@ -141,7 +142,8 @@ public class UserServiceImpl implements IUserService {
 
         return fullUsersDTO;
     }
-    
+
+
     @Override
     public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
         User user = userRepository.findById(userId);
@@ -158,12 +160,26 @@ public class UserServiceImpl implements IUserService {
 
         return new ResponseFollowDTO(userIdToUnfollow, "Se dejo de seguir");
     }
-
+    /**
+     * Use case us-0003's method
+     * It searches in userRepository if there are some user with the userId parameter
+     * if there aren't any, then throws a not found exception
+     * if that user hasn't any post, then throws a bad request exception
+     * else add the user id, userName and a list of followed users in followers array from ResponseUserFollowersDTO
+     * @author miaramosml
+     * @param userId int
+     * @return ResponseUserFollowersDTO
+     * @exception NotFoundException on user not found
+     * @exception BadRequestException on user is not a vendor
+     */
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new NotFoundException("El usuario no existe en nuestra base de datos");
+            throw new NotFoundException("User have not been found");
+        }
+        if (!user.isVendor()){
+            throw new NotFoundException("User is not a vendor");
         }
         //creo la lista de DTOs de followers para ese user
         List<UserDTO> followerDTOList = new ArrayList<>();
