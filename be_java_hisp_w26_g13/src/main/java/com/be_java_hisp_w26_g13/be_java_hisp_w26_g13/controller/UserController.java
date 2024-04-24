@@ -27,8 +27,8 @@ public class UserController {
 
     //US 0004: Obtener  un listado de todos los vendedores a los cuales sigue un determinado usuario
     @GetMapping("/{userId}/followed/list")
-    public ResponseEntity<?> getFollowedSellersList(@PathVariable int userId) {
-        return new ResponseEntity<>(iUserService.getFollowedSellers(userId), HttpStatus.OK);
+    public ResponseEntity<?> getFollowedSellersList(@PathVariable int userId, @RequestParam Optional<String> order) {
+        return new ResponseEntity<>(iUserService.getOrderedFollowedSellers(userId, order), HttpStatus.OK);
     }
 
     @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
@@ -47,10 +47,4 @@ public class UserController {
     ResponseEntity<?> followersCount(@PathVariable int userId){
         return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
     }
-
-    /*@GetMapping("/{userId}/followers/list")
-    public ResponseEntity<?> orderedFollowersList(@PathVariable Integer userId, @RequestParam String order) {
-        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getOrderedFollowersList(userId, order));
-    }*/
-
 }

@@ -24,9 +24,8 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     IUserRepository userRepository;
-    @Override
-    public ResponseFollowedByUserDTO getFollowedSellers(int userId) {
 
+    private ResponseFollowedByUserDTO getFollowedSellers(int userId) {
 
         User user = userRepository.findById(userId);
 
@@ -92,9 +91,9 @@ public class UserServiceImpl implements IUserService {
      * A NotFoundException will be thrown if the users with the received IDs do not
      * exist in the UserRepository.
      *
-     * @param  userId  an absolute URL giving the base location of the image
-     * @param  userIdToFollow the location of the image, relative to the url argument
-     * @return      the image at the specified URL
+     * @param  userId  the ID of the user that wants to follow the other one (follower)
+     * @param  userIdToFollow the ID of the user to be followed (followed)
+     * @return      the follower ID and a message describing the action
      * @see         ResponseFollowDTO
      * @see         BadRequestException
      * @see         NotFoundException
@@ -159,6 +158,38 @@ public class UserServiceImpl implements IUserService {
 
         return new ResponseFollowDTO(userIdToUnfollow, "Se dejo de seguir");
     }
+
+    /**
+     * Returns a sorted list of the vendors that the user with id userId follows.
+     * If order equals "name_asc" the list is sorted by userName from A to Z. The
+     * opposite happens if order equals "name_desc". If order is empty, the list is
+     * returned unordered.
+     *
+     * @param userId id of the user to get followed list from
+     * @param order sorts the list either ascending (name_asc) or descending (name_desc)
+     * @return the sorted (or not) list of vendors that the user follows
+     * @see ResponseFollowedByUserDTO
+     */
+    @Override
+    public ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, Optional<String> order) {
+        if (order.isEmpty()) {
+            return getFollowedSellers(userId);
+        }
+
+        ResponseFollowedByUserDTO userFollowedDTO = getFollowedSellers(userId);
+        List<UserDTO> followed = userFollowedDTO.getFollowed();
+
+        if (order.get().equals("name_asc")) {
+            followed.sort(Comparator.comparing(UserDTO::getUserName));
+        } else if (order.get().equals("name_desc")) {
+            followed.sort(Comparator.comparing(UserDTO::getUserName).reversed());
+        } else {
+            throw new BadRequestException("Order should be name_asc or name_desc.");
+        }
+
+        return userFollowedDTO;
+    }
+
     /**
      * Use case us-0003's method
      * It searches in userRepository if there are some user with the userId parameter
@@ -223,10 +254,20 @@ public class UserServiceImpl implements IUserService {
         return dto;
     }
 
+    /**
+     * Returns a sorted list of the user's followers. The user must have the id userId.
+     * If order equals "name_asc" the list is sorted by userName from A to Z. The
+     * opposite happens if order equals "name_desc". If order is empty, the list is
+     * returned unordered.
+     *
+     * @param userId id of the user to get the followers list from
+     * @param order sorts the list either ascending (name_asc) or descending (name_desc)
+     * @return the sorted (or not) list of users that follow the vendor
+     * @see ResponseFollowedByUserDTO
+     */
     @Override
     public ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order) {
         if (order.isEmpty()) {
-            System.out.println("hola");
             return getFollowersList(userId);
         }
 
