@@ -16,5 +16,9 @@ public class ExceptionController {
         return new ResponseEntity<>(exceptionDto, HttpStatus.NOT_FOUND);
     }
 
-
+    @ExceptionHandler(IncorrectDateException.class)
+    public ResponseEntity<?> incorrectDate(IncorrectDateException e){
+        ExceptionDto exceptionDto = new ExceptionDto(e.getMessage());
+        return new ResponseEntity<>(exceptionDto, HttpStatus.BAD_REQUEST);
+    }
 }
