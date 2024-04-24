@@ -18,4 +18,12 @@ public class UserController {
         return new ResponseEntity<>( iUserService.getFollowersList(userId), HttpStatus.OK);
     }
 
+    //metodo GET para el us-0002
+    @GetMapping("/{userId}/followers/count")
+    ResponseEntity<?> followersCount(@PathVariable int userId){
+        return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
+    }
+
+
+
 }
