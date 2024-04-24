@@ -54,14 +54,14 @@ public class PostServiceImpl implements IPostService {
 
     private Boolean isBadRequestPostDto(PostDTO postDto){
         return postDto.getDate() == null || postDto.getDate().isEmpty() ||
-                postDto.getPrice() >= 0 ||
-                postDto.getCategory() >= 0 ||
-                postDto.getUserId() >= 0 ||
+                postDto.getPrice() <= 0 ||
+                postDto.getCategory() <= 0 ||
+                postDto.getUserId() <= 0 ||
                 postDto.getProduct() == null || isBadRequestProductDto(postDto.getProduct());
     }
 
     private boolean isBadRequestProductDto(ProductDTO productDTO){
-        return productDTO.getProductId() >= 0 ||
+        return productDTO.getProductId() <= 0 ||
                 productDTO.getProductName() == null || productDTO.getProductName().isEmpty() ||
                 productDTO.getBrand() == null || productDTO.getBrand().isEmpty() ||
                 productDTO.getNotes() == null || productDTO.getNotes().isEmpty() ||
