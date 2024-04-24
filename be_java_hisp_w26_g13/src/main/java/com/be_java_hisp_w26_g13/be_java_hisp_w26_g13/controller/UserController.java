@@ -9,13 +9,35 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+
     @Autowired
     IUserService iUserService;
 
+    @PostMapping("/{userId}/follow/{userIdToFollow}")
+    public ResponseEntity<?> followUser(@PathVariable Integer userId, @PathVariable Integer userIdToFollow) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.followUser(userId, userIdToFollow));
+    }
+
+    @GetMapping("")
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.retrieveAllUsers());
+    }
+
+    //US 0004: Obtener  un listado de todos los vendedores a los cuales sigue un determinado usuario
+    @GetMapping("/{userId}/followed/list")
+    public ResponseEntity<?> getFollowedSellersList(@PathVariable int userId) {
+        return new ResponseEntity<>(iUserService.getFollowedSellers(userId), HttpStatus.OK);
+    }
+
+    @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    public ResponseEntity<?> unfollow(@PathVariable int userId, @PathVariable int userIdToUnfollow) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.unfollow(userId, userIdToUnfollow));
+    }
+
     //metodo GET para el us-0003
     @GetMapping("/{userId}/followers/list")
-    ResponseEntity<?>followersList(@PathVariable int userId){
-        return new ResponseEntity<>( iUserService.getFollowersList(userId), HttpStatus.OK);
+    ResponseEntity<?> followersList(@PathVariable int userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getFollowersList(userId));
     }
 
     //metodo GET para el us-0002
@@ -23,7 +45,5 @@ public class UserController {
     ResponseEntity<?> followersCount(@PathVariable int userId){
         return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
     }
-
-
 
 }

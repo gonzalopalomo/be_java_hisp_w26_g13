@@ -2,6 +2,7 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class PostRepositoryImpl implements IPostRepository {
     @Autowired
     private ProductRepositoryImpl productRepository;
 
+    @Autowired
+    UserRepositoryImpl userRepository;
+
     public PostRepositoryImpl() {
         this.listPost = new ArrayList<>();
     }
@@ -36,13 +40,21 @@ public class PostRepositoryImpl implements IPostRepository {
         LocalDate startDate = LocalDate.of(2023, 1, 1);
 
         for (int i = 0; i < 15; i++) {
-            int userId = random.nextInt(100) + 1;
+            int userId = random.nextInt(4) + 1;
             LocalDate date = startDate.plusDays(random.nextInt(365));
             Product product = products.get(i % products.size());
             int category = random.nextInt(5) + 1;
             double price = 100.0 + (random.nextDouble() * 1000.0);
 
             Post post = new Post(userId, date, product, category, price);
+            //cuando se crea un post lo agrego al user correspondiente en la lista de userRepository
+            List<User> userList =userRepository.getAll();
+            for (User user: userList){
+                if (user.getUserId() == userId){
+                    user.getPosts().add(post);
+                }
+            }
+            //agrego el post a la lista de post general
             listPost.add(post);
         }
     }
@@ -50,4 +62,7 @@ public class PostRepositoryImpl implements IPostRepository {
     public List<Post> getAll() {
         return listPost;
     }
+
+    @Override
+    public void create(Post post){ listPost.add(post); }
 }

@@ -34,19 +34,21 @@ public class UserRepositoryImpl implements IUserRepository {
         User noraBaker = new User(14, "Nora Baker");
         User oscarLee = new User(15, "Oscar Lee");
 
+
         UserMinimalData minimalBobSmith = new UserMinimalData(2, "Bob Smith");
         UserMinimalData minimalOscarLee = new UserMinimalData(15, "Oscar Lee");
         UserMinimalData minimalAliceMorrison = new UserMinimalData(1, "Alice Morrison");
         UserMinimalData minimalCharlyGarcia = new UserMinimalData(3, "Charlie Garcia");
 
-        aliceMorrison.setFollowed(List.of(minimalBobSmith));
-        aliceMorrison.setFollowers(List.of(minimalOscarLee));
-        bobSmith.setFollowed(List.of(minimalCharlyGarcia));
-        bobSmith.setFollowers(List.of(minimalOscarLee, minimalAliceMorrison));
-        oscarLee.setFollowed(List.of(minimalBobSmith, minimalAliceMorrison));
-        oscarLee.setFollowers(List.of(minimalCharlyGarcia));
-        charlyGarcia.setFollowed(List.of(minimalOscarLee));
-        charlyGarcia.setFollowers(List.of(minimalAliceMorrison, minimalBobSmith));
+
+        aliceMorrison.setFollowed(new ArrayList<>(List.of(minimalBobSmith)));
+        aliceMorrison.setFollowers(new ArrayList<>( List.of(minimalOscarLee)));
+        bobSmith.setFollowed(new ArrayList<>(List.of(minimalCharlyGarcia)));
+        bobSmith.setFollowers(new ArrayList<>( List.of(minimalOscarLee, minimalAliceMorrison)));
+        oscarLee.setFollowed(new ArrayList<>(List.of(minimalBobSmith, minimalAliceMorrison)));
+        oscarLee.setFollowers(new ArrayList<> (List.of(minimalCharlyGarcia)));
+        charlyGarcia.setFollowed(new ArrayList<> (List.of(minimalOscarLee)));
+        charlyGarcia.setFollowers(new ArrayList<>( List.of(minimalAliceMorrison, minimalBobSmith)));
 
         listUser.add(aliceMorrison);
         listUser.add(bobSmith);
@@ -73,5 +75,25 @@ public class UserRepositoryImpl implements IUserRepository {
     @Override
     public User findById(int id) {
         return listUser.stream().filter(user -> user.getUserId() == id).findFirst().orElse(null);
+    }
+
+    @Override
+    public UserMinimalData findFollowedById(User user, int idFollowed) {
+        return user.getFollowed().stream().filter(x->x.getUserId() == idFollowed).findFirst().orElse(null);
+    }
+
+    @Override
+    public UserMinimalData findFollowerById(User user, int idFollowed) {
+        return user.getFollowers().stream().filter(x->x.getUserId() == idFollowed).findFirst().orElse(null);
+    }
+
+    @Override
+    public void unfollowFollowed(User user, UserMinimalData followed) {
+        user.getFollowed().remove(followed);
+    }
+
+    @Override
+    public void unfollowFollower(User user, UserMinimalData followed) {
+        user.getFollowers().remove(followed);
     }
 }
