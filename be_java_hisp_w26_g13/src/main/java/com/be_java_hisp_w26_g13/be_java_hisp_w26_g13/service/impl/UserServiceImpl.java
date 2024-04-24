@@ -57,11 +57,11 @@ public class UserServiceImpl implements IUserService {
     public ResponseFollowersCountDTO getFollowersCount(int userId) {
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new NotFoundException("Given userId does not exist");
+            throw new NotFoundException("User with id " + userId + " does not exist");
         }
 
         if(!user.isVendor()){
-            throw new InvalidOperation("Non-vendor users do not have followers");
+            throw new InvalidOperation("User with id " + userId + " is not a vendor user, non-vendor users cannot have followers");
         }
 
         ResponseFollowersCountDTO dto = new ResponseFollowersCountDTO();
