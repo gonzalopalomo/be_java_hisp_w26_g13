@@ -60,6 +60,23 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    /**
+     * Performs a follow from the user with id userId to the user with id userIdToFollow.
+     * Both IDs must be non-null positive integers (or zero).
+     * This method returns a ResponseFollowDTO containing the follower user Id and a
+     * message describing the action. It checks if the user was already following the
+     * other user or if it tries to follow itself, as well as if the user to follow
+     * is a vendor. In those cases, a BadRequestException is thrown.
+     * A NotFoundException will be thrown if the users with the received IDs do not
+     * exist in the UserRepository.
+     *
+     * @param  userId  an absolute URL giving the base location of the image
+     * @param  userIdToFollow the location of the image, relative to the url argument
+     * @return      the image at the specified URL
+     * @see         ResponseFollowDTO
+     * @see         BadRequestException
+     * @see         NotFoundException
+     */
     @Override
     public ResponseFollowDTO followUser(Integer userId, Integer userIdToFollow) {
         validateFollowUserData(userId, userIdToFollow);
@@ -76,6 +93,14 @@ public class UserServiceImpl implements IUserService {
         return new ResponseFollowDTO(userId, "You are now following user " + followedUser.getUserName());
     }
 
+    /**
+     * Retrieves all users from the UserRepository and returns a list containing the
+     * corresponding users mapped to a FullUserDTO.
+     * @return a list containing all the users in the repository
+     * @see IUserRepository
+     * @see FullUserDTO
+     * @see UserDTO
+     */
     @Override
     public List<FullUserDTO> retrieveAllUsers() {
         List<User> users = userRepository.getAll();
