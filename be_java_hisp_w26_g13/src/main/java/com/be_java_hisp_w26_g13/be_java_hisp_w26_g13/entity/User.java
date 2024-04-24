@@ -16,11 +16,17 @@ public class User {
     private String userName;
     private List<UserMinimalData> followers;
     private List<UserMinimalData> followed;
+    private List<Post> posts;
 
     public User(int userId, String userName) {
         this.userId = userId;
         this.userName = userName;
         this.followers = new ArrayList<>();
         this.followed = new ArrayList<>();
+        this.posts = new ArrayList<>();
+    }
+
+    public boolean isVendor(){
+        return !posts.isEmpty();
     }
 }
