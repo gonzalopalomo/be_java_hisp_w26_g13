@@ -45,7 +45,14 @@ public class UserServiceImpl implements IUserService {
         return responseDTO;
     }
 
-    //Hay que verificar si es un vendedor
+    /**
+     * Retrieves the count of followers for a specified user if they are a vendor.
+     *
+     * @param userId The ID of the user for whom to retrieve the follower count.
+     * @return A {@link ResponseFollowersCountDTO} object containing the user's ID, user's name, and the count of followers.
+     * @throws NotFoundException if no user is found with the given userId.
+     * @throws InvalidOperation if the user identified by userId is not a vendor.
+     */
     @Override
     public ResponseFollowersCountDTO getFollowersCount(int userId) {
         User user = userRepository.findById(userId);
