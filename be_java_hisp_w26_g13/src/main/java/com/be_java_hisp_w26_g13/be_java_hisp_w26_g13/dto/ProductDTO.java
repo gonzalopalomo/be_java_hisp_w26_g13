@@ -15,8 +15,12 @@ public class ProductDTO {
     private int productId;
     @JsonProperty("product_name")
     private String productName;
+    @JsonProperty("type")
     private String type;
+    @JsonProperty("brand")
     private String brand;
+    @JsonProperty("color")
     private String color;
+    @JsonProperty("notes")
     private String notes;
 }

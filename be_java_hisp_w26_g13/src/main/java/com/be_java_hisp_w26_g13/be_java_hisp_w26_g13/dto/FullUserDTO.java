@@ -16,6 +16,8 @@ public class FullUserDTO {
     private int userId;
     @JsonProperty("user_name")
     private String userName;
+    @JsonProperty("followers")
     private List<UserDTO> followers;
+    @JsonProperty("followed")
     private List<UserDTO> followed;
 }

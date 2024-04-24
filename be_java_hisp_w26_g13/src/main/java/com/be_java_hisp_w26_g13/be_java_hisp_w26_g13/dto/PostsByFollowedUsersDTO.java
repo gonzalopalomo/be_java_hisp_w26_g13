@@ -13,5 +13,6 @@ import java.util.List;
 public class PostsByFollowedUsersDTO {
     @JsonProperty("user_id")
     private int userId;
+    @JsonProperty("posts")
     private List<PostDTO> posts;
 }

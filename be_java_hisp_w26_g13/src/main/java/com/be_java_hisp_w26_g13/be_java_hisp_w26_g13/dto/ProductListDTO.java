@@ -9,5 +9,6 @@ import java.util.List;
 public class ProductListDTO {
     @JsonProperty("user_id")
     private int userId;
+    @JsonProperty("products")
     private List<ProductDTO> products;
 }

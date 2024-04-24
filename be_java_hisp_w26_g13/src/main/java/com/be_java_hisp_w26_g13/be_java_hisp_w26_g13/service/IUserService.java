@@ -14,7 +14,6 @@ public interface IUserService {
     List<FullUserDTO> retrieveAllUsers();
     ResponseFollowDTO unfollow(int userId, int userIdToUnfollow);
     ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, Optional<String> order);
-    //ResponseUserFollowersDTO getFollowersList(int userId);
     ResponseFollowersCountDTO getFollowersCount(int userId);
     ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order);
 }
