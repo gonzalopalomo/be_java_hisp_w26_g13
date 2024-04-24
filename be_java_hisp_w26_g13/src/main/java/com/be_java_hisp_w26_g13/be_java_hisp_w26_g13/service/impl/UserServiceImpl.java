@@ -12,10 +12,9 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -122,6 +121,22 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
+    public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new NotFoundException("No se encontro el usuario");
+        }
+
+        UserMinimalData userFolled = userRepository.findFollowedById(user, userIdToUnfollow);
+        if (userFolled == null) {
+            throw new NotFoundException("No se encontro el seguidor");
+        }
+
+        userRepository.unfollowFollowed(user, userFolled);
+
+        return new ResponseFollowDTO(userIdToUnfollow, "Se dejo de seguir");
+    }
+
     public ResponseUserFollowersDTO getFollowersList(int userId) {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);

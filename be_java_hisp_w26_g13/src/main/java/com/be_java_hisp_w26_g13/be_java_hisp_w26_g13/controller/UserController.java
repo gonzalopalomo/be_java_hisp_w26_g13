@@ -17,14 +17,20 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(iUserService.followUser(userId, userIdToFollow));
     }
 
-    //metodo GET para el us-0003
-    @GetMapping("/{userId}/followers/list")
-    ResponseEntity<?>followersList(@PathVariable int userId){
-        return new ResponseEntity<>( iUserService.getFollowersList(userId), HttpStatus.OK);
-    }
-
     @GetMapping("")
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.status(HttpStatus.OK).body(iUserService.retrieveAllUsers());
+    }
+
+    @PostMapping("/{userId}/unfollow/{userIdToUnfollow}")
+    public ResponseEntity<?> unfollow(@PathVariable int userId, @PathVariable int userIdToUnfollow) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.unfollow(userId, userIdToUnfollow));
+    }
+
+
+    //metodo GET para el us-0003
+    @GetMapping("/{userId}/followers/list")
+    ResponseEntity<?> followersList(@PathVariable int userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(iUserService.getFollowersList(userId));
     }
 }
