@@ -37,7 +37,7 @@ public class PostRepositoryImpl implements IPostRepository {
     private void initializePosts() {
         List<Product> products = productRepository.getAllProducts();
         Random random = new Random();
-        LocalDate startDate = LocalDate.of(2023, 1, 1);
+        LocalDate startDate = LocalDate.of(2024, 4, 20);
 
         for (int i = 0; i < 15; i++) {
             int userId = random.nextInt(4) + 1;
@@ -65,4 +65,9 @@ public class PostRepositoryImpl implements IPostRepository {
 
     @Override
     public void create(Post post){ listPost.add(post); }
+
+    @Override
+    public List<Post> getPostBy(int userId) {
+        return listPost.stream().filter(post-> post.getUserId() == userId).toList();
+    }
 }

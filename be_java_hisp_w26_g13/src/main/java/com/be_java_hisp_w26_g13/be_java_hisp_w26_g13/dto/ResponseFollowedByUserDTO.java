@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResponseFollowedByUserDTO {
     @JsonProperty("user_id")
     private int userId;
@@ -17,6 +19,7 @@ public class ResponseFollowedByUserDTO {
     @JsonProperty("user_name")
     private String userName;
 
+    @JsonProperty("followed")
     private List<UserDTO> followed;
 
     public ResponseFollowedByUserDTO(int userId, String userName) {
