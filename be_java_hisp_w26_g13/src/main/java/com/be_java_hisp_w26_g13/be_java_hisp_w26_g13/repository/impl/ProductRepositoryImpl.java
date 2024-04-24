@@ -36,11 +36,11 @@ public class ProductRepositoryImpl implements IProductRepository {
 
     @Override
     public List<Product> getAll() {
-        return listProduct;
+        return null;
     }
 
     @Override
     public Product findById(int id) {
-        return listProduct.stream().filter(user -> user.getProductId() == id).findFirst().orElse(null);
+        return null;
     }
 }
