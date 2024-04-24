@@ -10,8 +10,8 @@ public interface IUserRepository {
     User findById(int id);
     UserMinimalData findFollowedById(User user, int idFollowed);
     UserMinimalData findFollowerById(User user, int idFollowed);
-    void unfollowFollowed(User user, UserMinimalData followed);
-    void unfollowFollower(User user, UserMinimalData followed);
+    void unfollowed(User user, UserMinimalData followed);
+    void deleteFollower(User user, UserMinimalData followed);
 
 
 

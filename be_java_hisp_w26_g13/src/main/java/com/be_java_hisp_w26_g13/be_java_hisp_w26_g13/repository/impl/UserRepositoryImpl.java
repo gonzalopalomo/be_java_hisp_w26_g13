@@ -88,12 +88,12 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
-    public void unfollowFollowed(User user, UserMinimalData followed) {
+    public void unfollowed(User user, UserMinimalData followed) {
         user.getFollowed().remove(followed);
     }
 
     @Override
-    public void unfollowFollower(User user, UserMinimalData followed) {
+    public void deleteFollower(User user, UserMinimalData followed) {
         user.getFollowers().remove(followed);
     }
 }
