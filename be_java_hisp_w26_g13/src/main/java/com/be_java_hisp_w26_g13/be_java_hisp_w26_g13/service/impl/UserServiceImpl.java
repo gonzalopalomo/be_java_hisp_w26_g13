@@ -25,7 +25,7 @@ public class UserServiceImpl implements IUserService {
         User user = userRepository.findById(userId);
 
         if(user == null){
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("User with id " + userId + " does not exist.");
         }
         List<UserMinimalData> sellers = user.getFollowed();
 
