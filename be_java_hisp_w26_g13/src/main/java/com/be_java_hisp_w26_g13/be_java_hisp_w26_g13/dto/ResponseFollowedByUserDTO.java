@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ResponseFollowedByUserDTO {
     @JsonProperty("user_id")
     private int userId;
