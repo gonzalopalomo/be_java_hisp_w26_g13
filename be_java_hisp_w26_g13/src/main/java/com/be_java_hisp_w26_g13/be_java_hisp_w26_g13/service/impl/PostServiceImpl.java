@@ -31,9 +31,21 @@ public class PostServiceImpl implements IPostService {
     @Autowired
     IPostRepository postRepository;
 
+
+    /**
+     *  Creates a new post based on the provided PostDTO object. This method validates the incoming data,
+     *  converts it into a Post entity, and persists it in the database. Various checks are performed during
+     *  the creation process to ensure data integrity and consistency.
+     *
+     * @param postDTO The PostDTO object containing data for creating the post.
+     * @return An ExceptionDto object indicating the status of the operation.
+     * @throws BadRequestException   if the provided PostDTO is invalid.
+     * @throws NotFoundException     if the user or product referenced in the post is not found.
+     * @throws IncorrectDateException if the date in the post is before the current date.
+     */
     @Override
     public ExceptionDto create(PostDTO postDTO){
-        if(isBadRequestPostDto(postDTO)){ throw new BadRequestException("Bad request"); }
+        if(isBadRequestPostDto(postDTO)){ throw new BadRequestException("The request is invalid or missing required data."); }
 
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
@@ -41,15 +53,15 @@ public class PostServiceImpl implements IPostService {
         Post post = mapper.convertValue(postDTO, Post.class);
 
         if(userRepository.findById(post.getUserId()) == null){
-            throw new NotFoundException("Usuario no encontrado");
+            throw new NotFoundException("User with id " + post.getUserId() + " does not exist.");
         } if(productRepository.findById(post.getProduct().getProductId()) == null){
-            throw new NotFoundException("Producto no encontrado");
+            throw new NotFoundException("User with id " + post.getProduct().getProductId() + " does not exist.");
         } if(post.getDate().isBefore(LocalDate.now())){
-            throw  new IncorrectDateException("La fecha ingresada es incorrecta");
+            throw  new IncorrectDateException("The provided date in the post is before the current date.");
         }
 
         postRepository.create(post);
-        return new ExceptionDto("Se creo el post correctamente");
+        return new ExceptionDto("The post has been successfully created");
     }
 
     private Boolean isBadRequestPostDto(PostDTO postDto){
