@@ -264,10 +264,10 @@ public class UserServiceImpl implements IUserService {
         //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
-            throw new NotFoundException("User have not been found");
+            throw new NotFoundException("User with id " + userId + " does not exist");
         }
         if (!user.isVendor()){
-            throw new NotFoundException("User is not a vendor");
+            throw new BadRequestException("User with id " + userId + " is not a vendor user, non-vendor users cannot have followers");
         }
         //creo la lista de DTOs de followers para ese user
         List<UserDTO> followerDTOList = new ArrayList<>();
