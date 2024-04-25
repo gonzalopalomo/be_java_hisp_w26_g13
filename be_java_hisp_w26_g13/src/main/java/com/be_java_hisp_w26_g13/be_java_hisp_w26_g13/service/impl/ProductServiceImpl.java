@@ -62,10 +62,12 @@ public class ProductServiceImpl implements IProductService {
                         followedVendorsPostList.add(mapper.convertValue(post, PostDTO.class));
                     });
         }
+        if (followedVendorsPostList.isEmpty()){
+            throw new NotFoundException("have not been found posts in that range");
+        }
         //ordenamiento por fecha ascendente
         followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
-        PostsByFollowedUsersDTO postsByFollowedUsersDTO = new PostsByFollowedUsersDTO(userId, followedVendorsPostList);
 
-        return postsByFollowedUsersDTO;
+        return new PostsByFollowedUsersDTO(userId, followedVendorsPostList);
     }
 }
