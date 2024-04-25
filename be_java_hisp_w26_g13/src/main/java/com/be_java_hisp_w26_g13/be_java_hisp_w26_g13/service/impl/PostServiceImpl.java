@@ -60,14 +60,13 @@ public class PostServiceImpl implements IPostService {
         if(user == null){
             throw new NotFoundException("User with id " + post.getUserId() + " does not exist.");
         } if(productRepository.findById(post.getProduct().getProductId()) == null){
-            throw new NotFoundException("User with id " + post.getProduct().getProductId() + " does not exist.");
+            throw new NotFoundException("Product with id " + post.getProduct().getProductId() + " does not exist.");
         } if(post.getDate().isBefore(LocalDate.now())){
             throw  new IncorrectDateException("The provided date in the post is before the current date.");
         }
 
         postRepository.create(post);
         user.getPosts().add(post);
-
         return new ExceptionDto("The post has been successfully created");
     }
 
