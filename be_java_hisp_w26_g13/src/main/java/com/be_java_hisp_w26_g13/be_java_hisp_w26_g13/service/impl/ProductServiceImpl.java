@@ -31,42 +31,45 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     IPostRepository postRepository;
 
-    private List<Post> orderByDate(List<Post> posts, String order) {
+    private void orderByDate(List<PostDTO> posts, String order) {
         if (order.equals("date_asc")) {
-            posts.sort(Comparator.comparing(Post::getDate));
+            posts.sort(Comparator.comparing(PostDTO::getDate));
         } else if (order.equals("date_desc")) {
-            posts.sort(Comparator.comparing(Post::getDate).reversed());
+            posts.sort(Comparator.comparing(PostDTO::getDate).reversed());
         }
-        return posts;
     }
 
     @Override
-    public PostsByFollowedUsersDTO getPostByFollowedUsers(int userId) {
+    public PostsByFollowedUsersDTO getPostByFollowedUsers(int userId, String order) {
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
                 .build();
         User user = userRepository.findById(userId);
-        if(user == null){
+        if (user == null) {
             throw new NotFoundException("User with id " + userId + " does not exist.");
         }
         List<UserMinimalData> followedVendors = user.getFollowed();
-        if(followedVendors.isEmpty()){
-            throw new BadRequestException("User with id  " + userId  + " has not followed vendors");
+        if (followedVendors.isEmpty()) {
+            throw new BadRequestException("User with id  " + userId + " has not followed vendors");
         }
-        List<PostDTO>followedVendorsPostList = new ArrayList<>();
+        List<PostDTO> followedVendorsPostList = new ArrayList<>();
         LocalDate twoWeeksAgo = LocalDate.now().minusDays(14);
-        for (UserMinimalData vendor : followedVendors){
+        for (UserMinimalData vendor : followedVendors) {
             postRepository.getPostBy(vendor.getUserId()).stream()
-                    .filter(post -> post.getDate().isAfter(twoWeeksAgo)&&post.getDate().isBefore(LocalDate.now().plusDays(1)))
-                    .forEach(post ->{
+                    .filter(post -> post.getDate().isAfter(twoWeeksAgo) && post.getDate().isBefore(LocalDate.now().plusDays(1)))
+                    .forEach(post -> {
                         followedVendorsPostList.add(mapper.convertValue(post, PostDTO.class));
                     });
         }
-        if (followedVendorsPostList.isEmpty()){
+        if (followedVendorsPostList.isEmpty()) {
             throw new NotFoundException("have not been found posts in that range");
         }
         //ordenamiento por fecha ascendente
+        if (order != null) {
+            orderByDate(followedVendorsPostList, order);
+        }else{
         followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
+        }
 
         return new PostsByFollowedUsersDTO(userId, followedVendorsPostList);
     }
