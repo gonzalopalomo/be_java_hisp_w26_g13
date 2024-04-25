@@ -1,5 +1,7 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.controller;
 
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IPostService;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ public class UserController {
 
     @Autowired
     IUserService iUserService;
+    @Autowired
+    IPostRepository postRepository;
 
     @PostMapping("/{userId}/follow/{userIdToFollow}")
     public ResponseEntity<?> followUser(@PathVariable Integer userId, @PathVariable Integer userIdToFollow) {
@@ -46,5 +50,10 @@ public class UserController {
     @GetMapping("/{userId}/followers/count")
     ResponseEntity<?> followersCount(@PathVariable int userId){
         return new ResponseEntity<>( iUserService.getFollowersCount(userId), HttpStatus.OK);
+    }
+
+    @GetMapping("/testproducts")
+    public ResponseEntity<?> getAllPost() {
+        return ResponseEntity.status(HttpStatus.OK).body(postRepository.getAll());
     }
 }

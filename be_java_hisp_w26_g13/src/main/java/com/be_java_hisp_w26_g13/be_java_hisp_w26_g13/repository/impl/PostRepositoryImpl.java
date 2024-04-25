@@ -37,11 +37,11 @@ public class PostRepositoryImpl implements IPostRepository {
     private void initializePosts() {
         List<Product> products = productRepository.getAllProducts();
         Random random = new Random();
-        LocalDate startDate = LocalDate.of(2024, 4, 20);
+        LocalDate startDate = LocalDate.of(2024, 2, 20);
 
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 55; i++) {
             int userId = random.nextInt(4) + 1;
-            LocalDate date = startDate.plusDays(random.nextInt(365));
+            LocalDate date = startDate.plusDays(random.nextInt(65));
             Product product = products.get(i % products.size());
             int category = random.nextInt(5) + 1;
             double price = 100.0 + (random.nextDouble() * 1000.0);

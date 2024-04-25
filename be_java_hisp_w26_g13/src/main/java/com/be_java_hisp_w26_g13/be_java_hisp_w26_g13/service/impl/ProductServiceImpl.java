@@ -15,6 +15,8 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.temporal.TemporalAmount;
 import java.util.Comparator;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -55,11 +57,13 @@ public class ProductServiceImpl implements IProductService {
         LocalDate twoWeeksAgo = LocalDate.now().minusDays(14);
         for (UserMinimalData vendor : followedVendors){
             postRepository.getPostBy(vendor.getUserId()).stream()
-                    .filter(post -> post.getDate().isAfter(twoWeeksAgo)&&post.getDate().isBefore(LocalDate.now()))
+                    .filter(post -> post.getDate().isAfter(twoWeeksAgo)&&post.getDate().isBefore(LocalDate.now().plusDays(1)))
                     .forEach(post ->{
                         followedVendorsPostList.add(mapper.convertValue(post, PostDTO.class));
                     });
         }
+        //ordenamiento por fecha ascendente
+        followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
         PostsByFollowedUsersDTO postsByFollowedUsersDTO = new PostsByFollowedUsersDTO(userId, followedVendorsPostList);
 
         return postsByFollowedUsersDTO;
