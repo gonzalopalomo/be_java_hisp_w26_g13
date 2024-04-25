@@ -45,6 +45,8 @@ public class ProductServiceImpl implements IProductService {
             posts.sort(Comparator.comparing(PostDTO::getDate));
         } else if (order.equals("date_desc")) {
             posts.sort(Comparator.comparing(PostDTO::getDate).reversed());
+        }else {
+            throw new BadRequestException("Order should be date_asc or date_desc.");
         }
     }
 

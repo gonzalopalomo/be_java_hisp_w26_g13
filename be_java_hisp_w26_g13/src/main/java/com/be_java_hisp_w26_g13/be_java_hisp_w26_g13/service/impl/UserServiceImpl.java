@@ -165,9 +165,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
 
-        unfollowed(userId,userIdToUnfollow);
+        UserMinimalData user = unfollowed(userId,userIdToUnfollow);
         deleteFollower(userId,userIdToUnfollow);
-        return new ResponseFollowDTO(userIdToUnfollow, "Unfollowed");
+        return new ResponseFollowDTO(userIdToUnfollow, "You have unfollowed user " + user.getUserName());
     }
 
     /**
@@ -176,7 +176,7 @@ public class UserServiceImpl implements IUserService {
      * @param userId The ID of the user who wants to unfollow another user.
      * @param userIdToUnfollow The ID of the user to unfollow.
      */
-    private void unfollowed(int userId, int userIdToUnfollow) {
+    private UserMinimalData unfollowed(int userId, int userIdToUnfollow) {
         User user = userRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException("User with id " + userId + " does not exist.");
@@ -188,6 +188,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         userRepository.unfollowed(user, userFollowed);
+        return userFollowed;
     }
 
     private void getSortedByUserName(List<UserDTO> userDTOs, String order) {
