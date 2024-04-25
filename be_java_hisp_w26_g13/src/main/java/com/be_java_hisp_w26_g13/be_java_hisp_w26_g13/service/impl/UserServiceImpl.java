@@ -165,9 +165,9 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
 
-        unfollowed(userId,userIdToUnfollow);
+        UserMinimalData user = unfollowed(userId,userIdToUnfollow);
         deleteFollower(userId,userIdToUnfollow);
-        return new ResponseFollowDTO(userIdToUnfollow, "Unfollowed");
+        return new ResponseFollowDTO(userIdToUnfollow, "You have unfollowed user " + user.getUserName());
     }
 
     /**
@@ -176,7 +176,7 @@ public class UserServiceImpl implements IUserService {
      * @param userId The ID of the user who wants to unfollow another user.
      * @param userIdToUnfollow The ID of the user to unfollow.
      */
-    private void unfollowed(int userId, int userIdToUnfollow) {
+    private UserMinimalData unfollowed(int userId, int userIdToUnfollow) {
         User user = userRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException("User with id " + userId + " does not exist.");
@@ -188,6 +188,7 @@ public class UserServiceImpl implements IUserService {
         }
 
         userRepository.unfollowed(user, userFollowed);
+        return userFollowed;
     }
 
     private void getSortedByUserName(List<UserDTO> userDTOs, String order) {
@@ -213,15 +214,15 @@ public class UserServiceImpl implements IUserService {
      * @see ResponseFollowedByUserDTO
      */
     @Override
-    public ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, Optional<String> order) {
-        if (order.isEmpty()) {
+    public ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, String order) {
+        if (order == null) {
             return getFollowedSellers(userId);
         }
 
         ResponseFollowedByUserDTO userFollowedDTO = getFollowedSellers(userId);
         List<UserDTO> followed = userFollowedDTO.getFollowed();
 
-        getSortedByUserName(followed, order.get());
+        getSortedByUserName(followed, order);
         return userFollowedDTO;
     }
 
@@ -324,15 +325,15 @@ public class UserServiceImpl implements IUserService {
      * @see ResponseFollowedByUserDTO
      */
     @Override
-    public ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order) {
-        if (order.isEmpty()) {
+    public ResponseUserFollowersDTO getOrderedFollowersList(int userId, String order) {
+        if (order == null) {
             return getFollowersList(userId);
         }
 
         ResponseUserFollowersDTO userFollowersDTO = getFollowersList(userId);
         List<UserDTO> followers = userFollowersDTO.getFollowers();
 
-        getSortedByUserName(followers, order.get());
+        getSortedByUserName(followers, order);
         return userFollowersDTO;
     }
 }

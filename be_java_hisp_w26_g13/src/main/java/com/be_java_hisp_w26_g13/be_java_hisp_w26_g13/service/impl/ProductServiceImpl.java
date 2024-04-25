@@ -31,14 +31,37 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     IPostRepository postRepository;
 
+    /**
+     * Orders the given list of posts by date in either ascending or descending order.
+     *
+     * @param posts the list of posts to be sorted
+     * @param order the order in which the posts should be sorted.
+     *              Must be one of the following strings:
+     *              - "date_asc" for ascending order
+     *              - "date_desc" for descending order
+     */
     private void orderByDate(List<PostDTO> posts, String order) {
         if (order.equals("date_asc")) {
             posts.sort(Comparator.comparing(PostDTO::getDate));
         } else if (order.equals("date_desc")) {
             posts.sort(Comparator.comparing(PostDTO::getDate).reversed());
+        }else {
+            throw new BadRequestException("Order should be date_asc or date_desc.");
         }
     }
 
+    /**
+     * Retrieves a list of posts created by users followed by the specified user within the last two weeks.
+     *
+     * @param userId the ID of the user whose followed vendors' posts are to be retrieved
+     * @param order  the order in which the posts should be sorted (optional, can be null).
+     *               Possible values are "date_asc" for ascending order and "date_desc" for descending order.
+     * @return a DTO (Data Transfer Object) containing posts created by followed users within the last two weeks,
+     *         sorted according to the specified order if provided
+     * @throws NotFoundException     if the user with the specified userId does not exist or if no posts are found
+     * within the specified range
+     * @throws BadRequestException    if the user with the specified userId has not followed any vendors
+     */
     @Override
     public PostsByFollowedUsersDTO getPostByFollowedUsers(int userId, String order) {
         ObjectMapper mapper = JsonMapper.builder()
