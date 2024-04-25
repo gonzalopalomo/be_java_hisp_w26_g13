@@ -213,15 +213,15 @@ public class UserServiceImpl implements IUserService {
      * @see ResponseFollowedByUserDTO
      */
     @Override
-    public ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, Optional<String> order) {
-        if (order.isEmpty()) {
+    public ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, String order) {
+        if (order == null) {
             return getFollowedSellers(userId);
         }
 
         ResponseFollowedByUserDTO userFollowedDTO = getFollowedSellers(userId);
         List<UserDTO> followed = userFollowedDTO.getFollowed();
 
-        getSortedByUserName(followed, order.get());
+        getSortedByUserName(followed, order);
         return userFollowedDTO;
     }
 
@@ -324,15 +324,15 @@ public class UserServiceImpl implements IUserService {
      * @see ResponseFollowedByUserDTO
      */
     @Override
-    public ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order) {
-        if (order.isEmpty()) {
+    public ResponseUserFollowersDTO getOrderedFollowersList(int userId, String order) {
+        if (order == null) {
             return getFollowersList(userId);
         }
 
         ResponseUserFollowersDTO userFollowersDTO = getFollowersList(userId);
         List<UserDTO> followers = userFollowersDTO.getFollowers();
 
-        getSortedByUserName(followers, order.get());
+        getSortedByUserName(followers, order);
         return userFollowersDTO;
     }
 }
