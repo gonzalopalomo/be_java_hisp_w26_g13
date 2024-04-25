@@ -31,6 +31,15 @@ public class ProductServiceImpl implements IProductService {
     @Autowired
     IPostRepository postRepository;
 
+    /**
+     * Orders the given list of posts by date in either ascending or descending order.
+     *
+     * @param posts the list of posts to be sorted
+     * @param order the order in which the posts should be sorted.
+     *              Must be one of the following strings:
+     *              - "date_asc" for ascending order
+     *              - "date_desc" for descending order
+     */
     private void orderByDate(List<PostDTO> posts, String order) {
         if (order.equals("date_asc")) {
             posts.sort(Comparator.comparing(PostDTO::getDate));
