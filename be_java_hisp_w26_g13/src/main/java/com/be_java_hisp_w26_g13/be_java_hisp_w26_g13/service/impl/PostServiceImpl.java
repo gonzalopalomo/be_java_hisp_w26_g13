@@ -4,6 +4,7 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ExceptionDto;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ProductDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.IncorrectDateException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
@@ -11,6 +12,7 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IProductRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IPostService;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PostServiceImpl implements IPostService {
@@ -49,10 +52,12 @@ public class PostServiceImpl implements IPostService {
 
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false)
                 .build();
         Post post = mapper.convertValue(postDTO, Post.class);
+        User user = userRepository.findById(post.getUserId());
 
-        if(userRepository.findById(post.getUserId()) == null){
+        if(user == null){
             throw new NotFoundException("User with id " + post.getUserId() + " does not exist.");
         } if(productRepository.findById(post.getProduct().getProductId()) == null){
             throw new NotFoundException("User with id " + post.getProduct().getProductId() + " does not exist.");
@@ -61,6 +66,8 @@ public class PostServiceImpl implements IPostService {
         }
 
         postRepository.create(post);
+        user.getPosts().add(post);
+
         return new ExceptionDto("The post has been successfully created");
     }
 
