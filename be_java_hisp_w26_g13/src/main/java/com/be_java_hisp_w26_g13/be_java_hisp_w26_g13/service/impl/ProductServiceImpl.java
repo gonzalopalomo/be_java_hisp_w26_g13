@@ -48,6 +48,18 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
+    /**
+     * Retrieves a list of posts created by users followed by the specified user within the last two weeks.
+     *
+     * @param userId the ID of the user whose followed vendors' posts are to be retrieved
+     * @param order  the order in which the posts should be sorted (optional, can be null).
+     *               Possible values are "date_asc" for ascending order and "date_desc" for descending order.
+     * @return a DTO (Data Transfer Object) containing posts created by followed users within the last two weeks,
+     *         sorted according to the specified order if provided
+     * @throws NotFoundException     if the user with the specified userId does not exist or if no posts are found
+     * within the specified range
+     * @throws BadRequestException    if the user with the specified userId has not followed any vendors
+     */
     @Override
     public PostsByFollowedUsersDTO getPostByFollowedUsers(int userId, String order) {
         ObjectMapper mapper = JsonMapper.builder()
