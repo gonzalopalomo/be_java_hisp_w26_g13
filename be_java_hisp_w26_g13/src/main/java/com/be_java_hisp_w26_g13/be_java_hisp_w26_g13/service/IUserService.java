@@ -13,7 +13,7 @@ public interface IUserService {
     ResponseFollowDTO followUser(Integer userId, Integer userIdToFollow);
     List<FullUserDTO> retrieveAllUsers();
     ResponseFollowDTO unfollow(int userId, int userIdToUnfollow);
-    ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, Optional<String> order);
+    ResponseFollowedByUserDTO getOrderedFollowedSellers(int userId, String order);
     ResponseFollowersCountDTO getFollowersCount(int userId);
-    ResponseUserFollowersDTO getOrderedFollowersList(int userId, Optional<String> order);
+    ResponseUserFollowersDTO getOrderedFollowersList(int userId, String order);
 }
