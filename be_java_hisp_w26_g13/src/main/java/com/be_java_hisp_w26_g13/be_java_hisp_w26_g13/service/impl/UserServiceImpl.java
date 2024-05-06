@@ -267,7 +267,6 @@ public class UserServiceImpl implements IUserService {
      * @exception BadRequestException on user is not a vendor
      */
     private ResponseUserFollowersDTO getFollowersList(int userId) {
-        //compruebo que exista el user, sino tiro una excepcion
         User user = userRepository.findById(userId);
         if (user == null) {
             throw new NotFoundException("User with id " + userId + " does not exist");
@@ -275,13 +274,11 @@ public class UserServiceImpl implements IUserService {
         if (!user.isVendor()){
             throw new BadRequestException("User with id " + userId + " is not a vendor user, non-vendor users cannot have followers");
         }
-        //creo la lista de DTOs de followers para ese user
         List<UserDTO> followerDTOList = new ArrayList<>();
         for (UserMinimalData follower : user.getFollowers()) {
             UserDTO followerDTO = new UserDTO(follower.getUserId(), follower.getUserName());
             followerDTOList.add(followerDTO);
         }
-        // creo el DTO de la response
         ResponseUserFollowersDTO responseDTO = new ResponseUserFollowersDTO();
         responseDTO.setUserId(user.getUserId());
         responseDTO.setUserName(user.getUserName());
