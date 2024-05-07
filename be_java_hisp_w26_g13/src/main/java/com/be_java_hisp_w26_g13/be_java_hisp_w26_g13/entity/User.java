@@ -15,7 +15,7 @@ public class User {
     private String userName;
     private List<UserMinimalData> followers;
     private List<UserMinimalData> followed;
-    private List<Post> posts;
+    private List<Integer> posts;
 
     public User(int userId, String userName) {
         this.userId = userId;
