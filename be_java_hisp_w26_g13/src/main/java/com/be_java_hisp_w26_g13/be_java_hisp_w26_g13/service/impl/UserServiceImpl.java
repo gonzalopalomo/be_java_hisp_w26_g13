@@ -70,28 +70,35 @@ public class UserServiceImpl implements IUserService {
         List<UserMinimalData> followedList = follower.getFollowed();
         List<UserMinimalData> followerList = userToFollow.getFollowers();
 
-        if (!followedList.contains(userToFollowMinimal) && !followerList.contains(followerMinimal)) {
-            if (userToFollow.isVendor()) {
-                followedList.add(userToFollowMinimal);
-                follower.setFollowed(followedList);
-                followerList.add(followerMinimal);
-                userToFollow.setFollowers(followerList);
-            } else {
-                throw new BadRequestException("Cannot follow user that is not a vendor.");
-            }
-        } else {
+        if (followedList.contains(userToFollowMinimal)) {
             throw new BadRequestException("User with id " + follower.getUserId()
                     + " is already following user with id " + userToFollow.getUserId());
         }
+        if (!userToFollow.isVendor()) {
+            throw new BadRequestException("Cannot follow user that is not a vendor.");
+        }
+
+        followedList.add(userToFollowMinimal);
+        follower.setFollowed(followedList);
+        followerList.add(followerMinimal);
+        userToFollow.setFollowers(followerList);
     }
 
 
-    private void validateFollowUserData(Integer userId, Integer userIdToFollow) {
-        if (userId == null || userIdToFollow == null) {
+    private void validateFollowUserData(User followerUser, Integer followerId,
+                                        User userToFollow, Integer userIdToFollow) {
+        if (followerUser == null) {
+            throw new NotFoundException("User with id " + followerId + " does not exist.");
+        }
+        if (userToFollow == null) {
+            throw new NotFoundException("User to follow with id " + userIdToFollow + " does not exist.");
+        }
+
+        if (followerId == null || userIdToFollow == null) {
             throw new BadRequestException("The input data is not correctly formatted.");
-        } else if (userId < 0 || userIdToFollow < 0) {
+        } else if (followerId < 0 || userIdToFollow < 0) {
             throw new BadRequestException("User IDs cannot be negative.");
-        } else if (userId.equals(userIdToFollow)) {
+        } else if (followerId.equals(userIdToFollow)) {
             throw new BadRequestException("User cannot follow itself.");
         }
     }
@@ -115,18 +122,13 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public ResponseFollowDTO followUser(Integer userId, Integer userIdToFollow) {
-        validateFollowUserData(userId, userIdToFollow);
         User followerUser = userRepository.findById(userId);
-        User followedUser = userRepository.findById(userIdToFollow);
-        if (followerUser == null) {
-            throw new NotFoundException("User with id " + userId + " does not exist.");
-        }
-        if (followedUser == null) {
-            throw new NotFoundException("User to follow with id " + userIdToFollow + " does not exist.");
-        }
-        addFollower(followerUser, followedUser);
+        User userToFollow = userRepository.findById(userIdToFollow);
+        validateFollowUserData(followerUser, userId, userToFollow, userIdToFollow);
 
-        return new ResponseFollowDTO(userId, "You are now following user " + followedUser.getUserName());
+        addFollower(followerUser, userToFollow);
+
+        return new ResponseFollowDTO(userId, "You are now following user " + userToFollow.getUserName());
     }
 
     /**
