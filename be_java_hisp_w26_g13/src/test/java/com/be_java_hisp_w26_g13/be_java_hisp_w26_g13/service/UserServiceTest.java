@@ -42,7 +42,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName(value = "El usuario a seguir existe")
+    @DisplayName(value = "User to follow exists")
     public void userToFollowExistsTest() {
         ResponseFollowDTO expectedResponse = new ResponseFollowDTO(
                 follower.getUserId(), "You are now following user " + userToFollow.getUserName()
@@ -57,7 +57,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @DisplayName(value = "El usuario a seguir no existe")
+    @DisplayName(value = "User to follow does not exist")
     public void userToFollowDoesNotExistTest() {
         when(userRepository.findById(follower.getUserId())).thenReturn(follower);
         when(userRepository.findById(notAUserID)).thenReturn(null);
