@@ -89,7 +89,7 @@ public class ProductServiceImpl implements IProductService {
         if (followedVendorsPostList.isEmpty()) {
             throw new NotFoundException("have not been found posts in that range");
         }
-        //ordenamiento por fecha ascendente
+
         if (order != null) {
             orderByDate(followedVendorsPostList, order);
         }else{
