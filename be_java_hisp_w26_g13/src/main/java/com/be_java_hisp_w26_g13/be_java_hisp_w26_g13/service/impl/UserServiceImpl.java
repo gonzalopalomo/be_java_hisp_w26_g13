@@ -6,6 +6,7 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.InvalidOperation;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -24,6 +25,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     IUserRepository userRepository;
+
+    @Autowired
+    IPostRepository postRepository;
 
     /**
      * This method retrieves the list of sellers that a specific user follows.
@@ -148,14 +152,15 @@ public class UserServiceImpl implements IUserService {
             for (UserMinimalData followed : user.getFollowed()) {
                 followedList.add(new UserDTO(followed.getUserId(), followed.getUserName()));
             }
-            List<PostDTO> postList = new ArrayList<>();
+            List<PostDTO> postDtoList = new ArrayList<>();
             ObjectMapper mapper = JsonMapper.builder()
                     .addModule(new JavaTimeModule())
                     .build();
-            for (Post post : user.getPosts()) {
-                postList.add(mapper.convertValue(post, PostDTO.class));
+            List<Post> postList = postRepository.getPostBy(user.getUserId());
+            for (Post post : postList) {
+                postDtoList.add(mapper.convertValue(post, PostDTO.class));
             }
-            fullUsersDTO.add(new FullUserDTO(user.getUserId(), user.getUserName(), followerList, followedList, postList));
+            fullUsersDTO.add(new FullUserDTO(user.getUserId(), user.getUserName(), followerList, followedList, postDtoList));
         }
 
         return fullUsersDTO;
@@ -172,31 +177,22 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResponseFollowDTO unfollow(int userId, int userIdToUnfollow) {
 
-        UserMinimalData user = unfollowed(userId,userIdToUnfollow);
-        deleteFollower(userId,userIdToUnfollow);
-        return new ResponseFollowDTO(userIdToUnfollow, "You have unfollowed user " + user.getUserName());
-    }
+        User followerUser = userRepository.findById(userId);
+        User followedUser = userRepository.findById(userIdToUnfollow);
 
-    /**
-     * Performs the action of validating if a user exists and if that user has the followed,
-     * and removes it from the list of followed
-     * @param userId The ID of the user who wants to unfollow another user.
-     * @param userIdToUnfollow The ID of the user to unfollow.
-     */
-    private UserMinimalData unfollowed(int userId, int userIdToUnfollow) {
-        User user = userRepository.findById(userId);
-        if (user == null) {
+        if (followerUser == null) {
             throw new NotFoundException("User with id " + userId + " does not exist.");
         }
-
-        UserMinimalData userFollowed = userRepository.findFollowedById(user, userIdToUnfollow);
-        if (userFollowed == null) {
-            throw new BadRequestException("User has not followed");
+        if (followedUser == null) {
+            throw new NotFoundException("User to unfollow with id " + userIdToUnfollow + " does not exist.");
         }
 
-        userRepository.unfollowed(user, userFollowed);
-        return userFollowed;
+        deleteFollow(followerUser,followedUser);
+        return new ResponseFollowDTO(userIdToUnfollow, "You have unfollowed user " + followedUser.getUserName());
     }
+
+
+
 
     private void getSortedByUserName(List<UserDTO> userDTOs, String order) {
         if (order.equals("name_asc")) {
@@ -233,26 +229,31 @@ public class UserServiceImpl implements IUserService {
         return userFollowedDTO;
     }
 
-
     /**
-     * Performs the action of validating if a user exists and if that user has the follower,
-     * and removes it from the list of follower
-     * @param userId The ID of the user who wants to unfollow another user.
-     * @param userIdUnfollower The ID of the user to unfollow.
+     * This method performs the action of validating if a user exists and if that user has the follower,
+     * and removes it from the list of followers.
+     *
+     * @param userUnFollowed The User object representing the user who is being unfollowed.
+     * @param userUnFollower The User object representing the user who is unfollowing the other user.
+     *
+     * @throws BadRequestException If the userUnFollowed is not currently followed by userUnFollower.
      */
-    private void deleteFollower(int userId, int userIdUnfollower) {
-        User userFollower = userRepository.findById(userIdUnfollower);
-        UserMinimalData userFollowerMinimal = userRepository.findFollowerById(userFollower, userId);
 
-        if (userFollower == null) {
-            throw new NotFoundException("User with id " + userId + " does not exist.");
+    private void deleteFollow(User userUnFollowed, User userUnFollower) {
+
+        UserMinimalData userUnFollowedMinimal = userRepository.findFollowedById(userUnFollowed, userUnFollower.getUserId());
+        UserMinimalData userUnFollowerMinimal = userRepository.findFollowerById(userUnFollower, userUnFollowed.getUserId());
+
+        List<UserMinimalData> unFollowedList = userUnFollowed.getFollowed();
+        List<UserMinimalData> unFollowerList = userUnFollower.getFollowers();
+        if (unFollowedList.contains(userUnFollowedMinimal) && unFollowerList.contains(userUnFollowerMinimal)) {
+
+            unFollowedList.remove(userUnFollowedMinimal);
+            unFollowerList.remove(userUnFollowerMinimal);
+        } else {
+            throw new BadRequestException("User with id " + userUnFollowed.getUserId()
+                    + " is not following user with id " + userUnFollower.getUserId());
         }
-
-        if (userFollowerMinimal == null) {
-            throw new BadRequestException("User has not follower");
-        }
-
-        userRepository.deleteFollower(userFollower, userFollowerMinimal);
     }
 
 

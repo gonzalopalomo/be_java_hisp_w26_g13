@@ -51,7 +51,7 @@ public class PostRepositoryImpl implements IPostRepository {
             List<User> userList =userRepository.getAll();
             for (User user: userList){
                 if (user.getUserId() == userId){
-                    user.getPosts().add(post);
+                    user.getPosts().add(post.getPostId());
                 }
             }
             //agrego el post a la lista de post general

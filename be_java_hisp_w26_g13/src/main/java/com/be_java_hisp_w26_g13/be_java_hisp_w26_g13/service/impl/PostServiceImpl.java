@@ -1,8 +1,7 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl;
 
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ExceptionDto;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.MessageDto;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostDTO;
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ProductDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 public class PostServiceImpl implements IPostService {
@@ -47,7 +45,7 @@ public class PostServiceImpl implements IPostService {
      * @throws IncorrectDateException if the date in the post is before the current date.
      */
     @Override
-    public ExceptionDto create(PostDTO postDTO){
+    public MessageDto create(PostDTO postDTO){
 
         ObjectMapper mapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())
@@ -65,7 +63,7 @@ public class PostServiceImpl implements IPostService {
         }
 
         postRepository.create(post);
-        user.getPosts().add(post);
-        return new ExceptionDto("The post has been successfully created");
+        user.getPosts().add(post.getPostId());
+        return new MessageDto("The post has been successfully created");
     }
 }
