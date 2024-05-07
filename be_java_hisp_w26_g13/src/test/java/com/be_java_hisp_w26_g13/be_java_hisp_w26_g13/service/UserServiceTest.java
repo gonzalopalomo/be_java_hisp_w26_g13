@@ -1,11 +1,14 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseUserFollowersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl.UserServiceImpl;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.utils.CustomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -70,4 +73,67 @@ public class UserServiceTest {
         String expectedExceptionMessage = "User to follow with id " + notAUserID + " does not exist.";
         Assertions.assertEquals(thrownException.getMessage(), expectedExceptionMessage);
     }
+
+    @Test
+    @DisplayName(value = "Follower list orders name_asc and name_desc exist")
+    public void followerListOrderExists() {
+        String orderAsc = "name_asc";
+        String orderDesc = "name_desc";
+        User vendor = CustomUtils.newMockedVendorWithMockedPosts();
+
+        when(userRepository.findById(vendor.getUserId())).thenReturn(vendor);
+
+        Assertions.assertDoesNotThrow(() -> userService.getOrderedFollowersList(vendor.getUserId(), orderAsc),
+                String.valueOf(BadRequestException.class));
+        Assertions.assertDoesNotThrow(() -> userService.getOrderedFollowersList(vendor.getUserId(), orderDesc),
+                String.valueOf(BadRequestException.class));
+    }
+
+    @Test
+    @DisplayName(value = "Follower list order does not exist")
+    public void followerListOrderDoesNotExist() {
+        String fakeOrder = "fake";
+        User vendor = CustomUtils.newMockedVendorWithMockedPosts();
+
+        when(userRepository.findById(vendor.getUserId())).thenReturn(vendor);
+
+        BadRequestException thrownException = Assertions.assertThrows(
+                BadRequestException.class,
+                () -> userService.getOrderedFollowersList(vendor.getUserId(), fakeOrder)
+        );
+        String expectedExceptionMessage = "Order should be name_asc or name_desc.";
+        Assertions.assertEquals(expectedExceptionMessage, thrownException.getMessage());
+    }
+
+    @Test
+    @DisplayName(value = "Followed sellers list orders name_asc and name_desc exist")
+    public void followedSellersListOrderExists() {
+        String orderAsc = "name_asc";
+        String orderDesc = "name_desc";
+        User user = CustomUtils.newMockedUser();
+
+        when(userRepository.findById(user.getUserId())).thenReturn(user);
+
+        Assertions.assertDoesNotThrow(() -> userService.getOrderedFollowedSellers(user.getUserId(), orderAsc),
+                String.valueOf(BadRequestException.class));
+        Assertions.assertDoesNotThrow(() -> userService.getOrderedFollowedSellers(user.getUserId(), orderDesc),
+                String.valueOf(BadRequestException.class));
+    }
+
+    @Test
+    @DisplayName(value = "Followed sellers list order does not exist")
+    public void followedSellersListOrderDoesNotExist() {
+        String fakeOrder = "fake";
+        User user = CustomUtils.newMockedUser();
+
+        when(userRepository.findById(user.getUserId())).thenReturn(user);
+
+        BadRequestException thrownException = Assertions.assertThrows(
+                BadRequestException.class,
+                () -> userService.getOrderedFollowedSellers(user.getUserId(), fakeOrder)
+        );
+        String expectedExceptionMessage = "Order should be name_asc or name_desc.";
+        Assertions.assertEquals(expectedExceptionMessage, thrownException.getMessage());
+    }
+
 }
