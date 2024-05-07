@@ -6,6 +6,7 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.InvalidOperation;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IPostRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.IUserService;
 import com.fasterxml.jackson.databind.json.JsonMapper;
@@ -24,6 +25,9 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     IUserRepository userRepository;
+
+    @Autowired
+    IPostRepository postRepository;
 
     /**
      * This method retrieves the list of sellers that a specific user follows.
@@ -146,14 +150,15 @@ public class UserServiceImpl implements IUserService {
             for (UserMinimalData followed : user.getFollowed()) {
                 followedList.add(new UserDTO(followed.getUserId(), followed.getUserName()));
             }
-            List<PostDTO> postList = new ArrayList<>();
+            List<PostDTO> postDtoList = new ArrayList<>();
             ObjectMapper mapper = JsonMapper.builder()
                     .addModule(new JavaTimeModule())
                     .build();
-            for (Post post : user.getPosts()) {
-                postList.add(mapper.convertValue(post, PostDTO.class));
+            List<Post> postList = postRepository.getPostBy(user.getUserId());
+            for (Post post : postList) {
+                postDtoList.add(mapper.convertValue(post, PostDTO.class));
             }
-            fullUsersDTO.add(new FullUserDTO(user.getUserId(), user.getUserName(), followerList, followedList, postList));
+            fullUsersDTO.add(new FullUserDTO(user.getUserId(), user.getUserName(), followerList, followedList, postDtoList));
         }
 
         return fullUsersDTO;

@@ -63,7 +63,7 @@ public class PostServiceImpl implements IPostService {
         }
 
         postRepository.create(post);
-        user.getPosts().add(post);
+        user.getPosts().add(post.getPostId());
         return new MessageDto("The post has been successfully created");
     }
 }
