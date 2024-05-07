@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -44,6 +45,7 @@ public class ProductServiceTest {
             .build();
 
     @Test
+    @DisplayName("Check if the retrieved post of the desired vendor are into the two weeks range")
     public void checkTimePeriodOfRetrievedPost() {
         int userIdParam = 15;
         String orderParam = "date_desc";
@@ -57,16 +59,27 @@ public class ProductServiceTest {
 
         List<Post> mockedFollowedVendorsPostList = new ArrayList<>();
 
-        Product product = new Product(1, "HyperX Cloud II", "Headset", "HyperX", "Red", "Excellent noise canceling");
-        LocalDate twoWeeksAgo = LocalDate.now().minusDays(14);
-        Post firstPost = new Post(mockedVendor.getUserId(), twoWeeksAgo, product, 2, 2000.0);
-        Post todayPost = new Post(mockedVendor.getUserId(), LocalDate.now(), product, 2, 2000.0);
+        Product product = new Product(1,
+                "HyperX Cloud II",
+                "Headset",
+                "HyperX",
+                "Red",
+                "Excellent noise canceling");
+        LocalDate fourteenDaysAgo = LocalDate.now().minusDays(13);
+        LocalDate fifteenDaysAgo = LocalDate.now().minusDays(14);
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
 
+        Post beforeRangePost = new Post(mockedVendor.getUserId(), fifteenDaysAgo, product, 1, 3000.0);
+        Post firstPost = new Post(mockedVendor.getUserId(), fourteenDaysAgo, product, 3, 2500.0);
+        Post todayPost = new Post(mockedVendor.getUserId(), LocalDate.now(), product, 2, 2000.0);
+        Post tomorrowPost = new Post(mockedVendor.getUserId(), tomorrow, product, 1, 3000.0);
+
+        mockedFollowedVendorsPostList.add(beforeRangePost);
         mockedFollowedVendorsPostList.add(firstPost);
         mockedFollowedVendorsPostList.add(todayPost);
+        mockedFollowedVendorsPostList.add(tomorrowPost);
 
-
-        Mockito.when(userRepository.findById(userIdParam)).thenReturn(mockedUser);
+        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
 
         Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
                 .thenReturn(mockedFollowedVendorsPostList);
@@ -76,7 +89,9 @@ public class ProductServiceTest {
 
         for (PostDTO postDTO: postsByFollowedUsersDTO.getPosts()){
             Post post = mapper.convertValue(postDTO, Post.class);
-            Assertions.assertTrue(post.getDate().isAfter(LocalDate.now().minusDays(14)) && post.getDate().isBefore(LocalDate.now().plusDays(1)));
+            Assertions.assertTrue(post.getDate().isAfter(fifteenDaysAgo)
+                    && post.getDate().isBefore(tomorrow)
+            );
         }
 
     }
