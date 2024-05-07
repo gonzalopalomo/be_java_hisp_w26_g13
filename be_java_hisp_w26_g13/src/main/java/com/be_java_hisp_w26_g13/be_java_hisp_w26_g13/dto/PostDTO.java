@@ -23,10 +23,10 @@ public class PostDTO implements Serializable {
     @Min(value = 1, message = "El id debe ser mayor a cero")
     private int userId;
 
-    @NotBlank(message = "La fecha no puede estar vacía.")
+    @NotNull(message = "La fecha no puede estar vacía.")
     @JsonProperty("date")
     @JsonFormat(pattern = "dd-MM-yyyy")
-    private String date;
+    private LocalDate date;
 
     @NotNull(message = "El campo no puede estar vacio")
     @JsonProperty("product")
