@@ -6,6 +6,8 @@ import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl.PostRepositoryImpl;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl.UserRepositoryImpl;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl.ProductServiceImpl;
@@ -95,5 +97,40 @@ public class ProductServiceTest {
         }
 
     }
+
+    @Test
+    @DisplayName("T-0005: Verificar que el tipo de ordenamiento por fecha exista - Exception")
+    public void getPostByFollowedUsersBadPathTest() {
+        int userIdParam = 15;
+        String orderParam = "date_desc";
+
+        User mockedVendor = new User(1, "Alice Morrison");
+        User mockedUser = new User(15, "Oscar Lee");
+
+        UserMinimalData minimalVendor = new UserMinimalData(1, "Alice Morrison");
+        UserMinimalData minimalUser = new UserMinimalData(15, "Oscar Lee");
+
+        mockedVendor.setFollowers(new ArrayList<>(List.of(minimalUser)));
+        mockedUser.setFollowed(new ArrayList<>(List.of(minimalVendor)));
+
+        List<Post> mockedFollowedVendorsPostList = new ArrayList<>();
+
+
+        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
+
+        Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
+                .thenReturn(mockedFollowedVendorsPostList);
+
+        Assertions.assertThrows(NotFoundException.class, () -> {
+            productService.getPostByFollowedUsers(userIdParam, orderParam);
+        });
+        }
+
+    @Test
+    @DisplayName("T-0005: Verificar que el tipo de ordenamiento por fecha exista (US-0009) date_asc , date_desc")
+    public void getPostByFollowedUsersTest() {
+
+    }
+
 
 }
