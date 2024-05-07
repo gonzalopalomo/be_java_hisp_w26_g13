@@ -3,6 +3,7 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostsByFollowedUsersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl.PostRepositoryImpl;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.impl.UserRepositoryImpl;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl.ProductServiceImpl;
@@ -21,6 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -63,6 +65,36 @@ public class ProductServiceTest {
         Assertions.assertTrue(secondPostDate.isAfter(fifteenDaysAgo));
         Assertions.assertTrue(secondPostDate.isBefore(tomorrow));
 
+    }
+
+    @Test
+    public void orderedAscFollowedPostTest(){
+        PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_asc");
+        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_asc")));
+    }
+
+    @Test
+    public void orderedDescFollowedPostTest(){
+        PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_desc");
+        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_desc")));
+    }
+
+    @Test
+    public void orderedFollowedPostSadPathTest(){
+        Assertions.assertThrows(BadRequestException.class, () -> this.followedPosts("asd"));
+    }
+
+    private PostsByFollowedUsersDTO followedPosts(String order){
+        int userIdParam = 15;
+
+        User mockedVendor = CustomUtils.newMockedVendor();
+        User mockedUser = CustomUtils.newMockedUser();
+
+        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
+        Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
+                .thenReturn(CustomUtils.newMockedFollowedVendorPostList());
+
+        return productService.getPostByFollowedUsers(userIdParam, order);
     }
 
 }

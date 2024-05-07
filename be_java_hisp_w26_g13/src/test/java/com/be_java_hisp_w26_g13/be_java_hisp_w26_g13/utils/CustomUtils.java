@@ -1,12 +1,20 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.utils;
 
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostsByFollowedUsersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.BadRequestException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class CustomUtils {
@@ -61,5 +69,22 @@ public class CustomUtils {
         mockedFollowedVendorsPostList.add(todayPost);
         mockedFollowedVendorsPostList.add(tomorrowPost);
         return mockedFollowedVendorsPostList;
+    }
+
+    public static PostsByFollowedUsersDTO newMockedFollowedVendorPostAsDtoList(String order) {
+        ObjectMapper mapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+                .build();
+        List<Post> mockedPostList = CustomUtils.newMockedFollowedVendorPostList();
+        mockedPostList = mockedPostList.stream().filter(p -> p.getDate().isAfter(fifteenDaysAgo) && p.getDate().isBefore(tomorrow)).toList();
+        List<PostDTO> followedVendorsPostList = new ArrayList<>();
+        mockedPostList.forEach(post -> {followedVendorsPostList.add(mapper.convertValue(post, PostDTO.class));});
+        if (order.equals("date_asc")) {
+            followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
+        } else if (order.equals("date_desc")) {
+            followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate).reversed());
+        }
+        return new PostsByFollowedUsersDTO(15, followedVendorsPostList);
     }
 }

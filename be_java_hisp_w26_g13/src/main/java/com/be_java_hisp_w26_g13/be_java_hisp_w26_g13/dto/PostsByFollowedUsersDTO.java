@@ -3,6 +3,7 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 public class PostsByFollowedUsersDTO {
     @JsonProperty("user_id")
     private int userId;
