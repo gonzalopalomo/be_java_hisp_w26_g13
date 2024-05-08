@@ -19,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -98,5 +99,29 @@ public class ProductServiceTest {
         Assertions.assertThrows(BadRequestException.class, ()->productService.getPostByFollowedUsers(userIdParam,order));
     }
 
+    @Test
+    public void orderedAscFollowedPostTest(){
+        PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_asc");
+        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_asc")));
+    }
+
+    @Test
+    public void orderedDescFollowedPostTest(){
+        PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_desc");
+        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_desc")));
+    }
+
+    private PostsByFollowedUsersDTO followedPosts(String order){
+        int userIdParam = 15;
+
+        User mockedVendor = CustomUtils.newMockedVendor();
+        User mockedUser = CustomUtils.newMockedUser();
+
+        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
+        Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
+                .thenReturn(CustomUtils.newMockedFollowedVendorPostList());
+
+        return productService.getPostByFollowedUsers(userIdParam, order);
+    }
 
 }
