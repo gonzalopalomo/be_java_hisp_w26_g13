@@ -93,14 +93,16 @@ public class CustomUtils {
     }
 
     public static PostsByFollowedUsersDTO newMockedFollowedVendorPostAsDtoList(String order) {
-        ObjectMapper mapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
-                .build();
         List<Post> mockedPostList = CustomUtils.newMockedFollowedVendorPostList();
         mockedPostList = mockedPostList.stream().filter(p -> p.getDate().isAfter(fifteenDaysAgo) && p.getDate().isBefore(tomorrow)).toList();
         List<PostDTO> followedVendorsPostList = new ArrayList<>();
-        mockedPostList.forEach(post -> {followedVendorsPostList.add(mapper.convertValue(post, PostDTO.class));});
+        for(Post post : mockedPostList){
+            ProductDTO product = new ProductDTO(post.getProduct().getProductId(), post.getProduct().getProductName(),
+                                                post.getProduct().getType(),post.getProduct().getBrand(),
+                                                post.getProduct().getColor(), post.getProduct().getNotes());
+            followedVendorsPostList.add(new PostDTO(post.getPostId(), post.getUserId(),
+                                                    post.getDate(), product, post.getCategory(), post.getPrice()));
+        }
         if (order.equals("date_asc")) {
             followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
         } else if (order.equals("date_desc")) {
