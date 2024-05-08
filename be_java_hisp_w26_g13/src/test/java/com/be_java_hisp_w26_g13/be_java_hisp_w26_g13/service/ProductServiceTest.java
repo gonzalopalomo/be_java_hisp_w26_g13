@@ -102,13 +102,13 @@ public class ProductServiceTest {
     @Test
     public void orderedAscFollowedPostTest(){
         PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_asc");
-        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_asc")));
+        Assertions.assertEquals(mockedFollowedVendorsPostList, this.followedPosts("date_asc"));
     }
 
     @Test
     public void orderedDescFollowedPostTest(){
         PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_desc");
-        Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_desc")));
+        Assertions.assertEquals(mockedFollowedVendorsPostList, this.followedPosts("date_desc"));
     }
 
     private PostsByFollowedUsersDTO followedPosts(String order){
