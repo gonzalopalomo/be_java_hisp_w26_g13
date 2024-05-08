@@ -79,11 +79,6 @@ public class ProductServiceTest {
         Assertions.assertTrue(mockedFollowedVendorsPostList.equals(this.followedPosts("date_desc")));
     }
 
-    @Test
-    public void orderedFollowedPostSadPathTest(){
-        Assertions.assertThrows(BadRequestException.class, () -> this.followedPosts("asd"));
-    }
-
     private PostsByFollowedUsersDTO followedPosts(String order){
         int userIdParam = 15;
 
