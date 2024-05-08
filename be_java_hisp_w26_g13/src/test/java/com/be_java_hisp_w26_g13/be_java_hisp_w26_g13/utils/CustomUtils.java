@@ -35,6 +35,15 @@ public class CustomUtils {
     }
 
     /**
+     * @return a mocked vendor with a list of two mocked posts
+     */
+    public static User newMockedVendorWithMockedPosts() {
+        User mockedVendor = newMockedVendor();
+        mockedVendor.setPosts(List.of(1,2));
+        return mockedVendor;
+    }
+
+    /**
      * @return a mocked User with userId = 15
      * following userId = 15
      */
