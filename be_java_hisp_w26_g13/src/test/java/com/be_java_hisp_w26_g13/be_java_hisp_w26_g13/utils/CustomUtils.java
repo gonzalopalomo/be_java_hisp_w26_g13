@@ -2,6 +2,7 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.utils;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostsByFollowedUsersDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ProductDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
@@ -18,12 +19,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CustomUtils {
-    private static final LocalDate fourteenDaysAgo = LocalDate.now().minusDays(13);
+    public static final LocalDate fourteenDaysAgo = LocalDate.now().minusDays(13);
     public static final LocalDate fifteenDaysAgo = LocalDate.now().minusDays(14);
     public static final LocalDate tomorrow = LocalDate.now().plusDays(1);
 
     /**
-     * @return  a mocked vendor with userId = 1
+     * @return a mocked vendor with userId = 1
      * followed by userId = 15
      */
     public static User newMockedVendor() {
@@ -44,24 +45,35 @@ public class CustomUtils {
         return mockedUser;
     }
 
+    public static Product newMockedProduct() {
+        return new Product(1,
+                "HyperX Cloud II",
+                "Headset",
+                "HyperX",
+                "Red",
+                "Excellent noise canceling");
+    }
+
+    public static ProductDTO newMockedProductDTO() {
+        return new ProductDTO(1,
+                "HyperX Cloud II",
+                "Headset",
+                "HyperX",
+                "Red",
+                "Excellent noise canceling");
+    }
 
     /**
      * @return a list of post for vendor userId = 1
      */
     public static List<Post> newMockedFollowedVendorPostList() {
         User mockedVendor = newMockedVendor();
+        Product product = newMockedProduct();
 
-        Product product = new Product(1,
-                "HyperX Cloud II",
-                "Headset",
-                "HyperX",
-                "Red",
-                "Excellent noise canceling");
-
-        Post beforeRangePost = new Post(mockedVendor.getUserId(), fifteenDaysAgo, product, 1, 3000.0);
-        Post firstPost = new Post(mockedVendor.getUserId(), fourteenDaysAgo, product, 3, 2500.0);
-        Post todayPost = new Post(mockedVendor.getUserId(), LocalDate.now(), product, 2, 2000.0);
-        Post tomorrowPost = new Post(mockedVendor.getUserId(), tomorrow, product, 1, 3000.0);
+        Post beforeRangePost = new Post(1, mockedVendor.getUserId(), fifteenDaysAgo, product, 1, 3000.0);
+        Post firstPost = new Post(2, mockedVendor.getUserId(), fourteenDaysAgo, product, 3, 2500.0);
+        Post todayPost = new Post(3, mockedVendor.getUserId(), LocalDate.now(), product, 2, 2000.0);
+        Post tomorrowPost = new Post(4, mockedVendor.getUserId(), tomorrow, product, 1, 3000.0);
         List<Post> mockedFollowedVendorsPostList = new ArrayList<>();
 
         mockedFollowedVendorsPostList.add(beforeRangePost);

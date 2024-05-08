@@ -3,9 +3,11 @@ package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.UserMinimalData;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.exception.NotFoundException;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.repository.IUserRepository;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service.impl.UserServiceImpl;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.utils.CustomUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -70,4 +73,40 @@ public class UserServiceTest {
         String expectedExceptionMessage = "User to follow with id " + notAUserID + " does not exist.";
         Assertions.assertEquals(thrownException.getMessage(), expectedExceptionMessage);
     }
+
+
+    @Test
+    @DisplayName(value = "User to unfollow exists")
+    public void userToUnFollowExistsTest() {
+        User userOne = CustomUtils.newMockedUser();
+        User userTwoToUnfollow = CustomUtils.newMockedVendor();
+
+        UserMinimalData userFollowedMinimal = userOne.getFollowed().get(0);
+        UserMinimalData userFollowerMinimal = userTwoToUnfollow.getFollowers().get(0);
+
+        when(userRepository.findById(userOne.getUserId())).thenReturn(userOne);
+        when(userRepository.findById(userTwoToUnfollow.getUserId())).thenReturn(userTwoToUnfollow);
+
+        when(userRepository.findFollowedById(userOne, userTwoToUnfollow.getUserId())).thenReturn(
+                userFollowedMinimal);
+        when(userRepository.findFollowerById(userTwoToUnfollow, userOne.getUserId())).thenReturn(
+                userFollowerMinimal);
+
+        Assertions.assertDoesNotThrow(
+                () -> userService.unfollow(userOne.getUserId(), userTwoToUnfollow.getUserId()));
+    }
+
+    @Test
+    @DisplayName(value = "User to unfollow does not exist")
+    public void userToUnFollowDoesNotExistTest() {
+        User userOne = CustomUtils.newMockedUser();
+        User userTwoToUnfollow = CustomUtils.newMockedVendor();
+
+        when(userRepository.findById(userOne.getUserId())).thenReturn(userOne);
+        when(userRepository.findById(userTwoToUnfollow.getUserId())).thenReturn(null);
+
+        assertThrows(NotFoundException.class, () -> userService.unfollow(userOne.getUserId(),userTwoToUnfollow.getUserId()));
+    }
+
+
 }
