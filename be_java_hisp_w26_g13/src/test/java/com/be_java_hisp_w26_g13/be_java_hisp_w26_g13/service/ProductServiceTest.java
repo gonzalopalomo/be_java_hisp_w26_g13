@@ -79,12 +79,14 @@ public class ProductServiceTest {
     }
 
     @Test
+    @DisplayName("Verify correct ascending date sorting")
     public void orderedAscFollowedPostTest(){
         PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_asc");
         Assertions.assertEquals(mockedFollowedVendorsPostList, this.followedPosts("date_asc"));
     }
 
     @Test
+    @DisplayName("Verify correct descending date sorting")
     public void orderedDescFollowedPostTest(){
         PostsByFollowedUsersDTO mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostAsDtoList("date_desc");
         Assertions.assertEquals(mockedFollowedVendorsPostList, this.followedPosts("date_desc"));

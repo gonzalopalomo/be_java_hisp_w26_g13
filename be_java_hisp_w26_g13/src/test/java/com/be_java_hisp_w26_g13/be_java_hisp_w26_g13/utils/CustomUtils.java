@@ -1,8 +1,6 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.utils;
 
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostDTO;
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.PostsByFollowedUsersDTO;
-import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ProductDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.*;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Product;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
@@ -30,7 +28,10 @@ public class CustomUtils {
     public static User newMockedVendor() {
         User mockedVendor = new User(1, "Alice Morrison");
         UserMinimalData minimalUser = new UserMinimalData(15, "Oscar Lee");
-        mockedVendor.setFollowers(new ArrayList<>(List.of(minimalUser)));
+        UserMinimalData minimalUserTwo = new UserMinimalData(16, "Brenda Jhonson");
+
+        mockedVendor.setFollowers(new ArrayList<>(List.of(minimalUser, minimalUserTwo)));
+        mockedVendor.setPosts(List.of(1, 2));
         return mockedVendor;
     }
 
@@ -39,7 +40,7 @@ public class CustomUtils {
      */
     public static User newMockedVendorWithMockedPosts() {
         User mockedVendor = newMockedVendor();
-        mockedVendor.setPosts(List.of(1,2));
+        mockedVendor.setPosts(List.of(1, 2));
         return mockedVendor;
     }
 
@@ -52,6 +53,50 @@ public class CustomUtils {
         UserMinimalData minimalVendor = new UserMinimalData(1, "Alice Morrison");
         mockedUser.setFollowed(new ArrayList<>(List.of(minimalVendor)));
         return mockedUser;
+    }
+
+    /**
+     * @return a mocked User with userId = 15
+     * following userId = 15
+     */
+    public static User newMockedUserTwo() {
+        User mockedUser = new User(16, "Brenda Jhonson");
+        UserMinimalData minimalVendor = new UserMinimalData(1, "Alice Morrison");
+        mockedUser.setFollowed(new ArrayList<>(List.of(minimalVendor, new UserMinimalData(2, "Bob Marley"))));
+        return mockedUser;
+    }
+
+    public static ResponseUserFollowersDTO newResponseUserFollowersDTO(String order) {
+        ResponseUserFollowersDTO responseUserFollowersDTO = new ResponseUserFollowersDTO(1, "Alice Morrison",
+                new ArrayList<>(List.of(new UserDTO(15, "Oscar Lee"),
+                        new UserDTO(16, "Brenda Jhonson"))
+                )
+        );
+
+        if (order.equals("name_asc")) {
+            responseUserFollowersDTO.getFollowers().sort(Comparator.comparing(UserDTO::getUserName));
+        } else if (order.equals("name_desc")) {
+            responseUserFollowersDTO.getFollowers().sort(Comparator.comparing(UserDTO::getUserName).reversed());
+        }
+
+        return responseUserFollowersDTO;
+    }
+
+    public static ResponseFollowedByUserDTO newResponseFollowedByUserDTO(String order) {
+        ResponseFollowedByUserDTO responseFollowedByUserDTO = new ResponseFollowedByUserDTO(16, "Brenda Jhonson",
+                new ArrayList<>(List.of(new UserDTO(1, "Alice Morrison"),
+                        new UserDTO(2, "Bob Marley"))
+                )
+        );
+
+        if (order.equals("name_asc")) {
+            responseFollowedByUserDTO
+                    .getFollowed().sort(Comparator.comparing(UserDTO::getUserName));
+        } else if (order.equals("name_desc")) {
+            responseFollowedByUserDTO.getFollowed().sort(Comparator.comparing(UserDTO::getUserName).reversed());
+        }
+
+        return responseFollowedByUserDTO;
     }
 
     public static Product newMockedProduct() {
@@ -96,6 +141,7 @@ public class CustomUtils {
         List<Post> mockedPostList = CustomUtils.newMockedFollowedVendorPostList();
         mockedPostList = mockedPostList.stream().filter(p -> p.getDate().isAfter(fifteenDaysAgo) && p.getDate().isBefore(tomorrow)).toList();
         List<PostDTO> followedVendorsPostList = new ArrayList<>();
+
         for(Post post : mockedPostList){
             ProductDTO product = new ProductDTO(post.getProduct().getProductId(), post.getProduct().getProductName(),
                                                 post.getProduct().getType(),post.getProduct().getBrand(),
@@ -103,6 +149,7 @@ public class CustomUtils {
             followedVendorsPostList.add(new PostDTO(post.getPostId(), post.getUserId(),
                                                     post.getDate(), product, post.getCategory(), post.getPrice()));
         }
+
         if (order.equals("date_asc")) {
             followedVendorsPostList.sort(Comparator.comparing(PostDTO::getDate));
         } else if (order.equals("date_desc")) {
