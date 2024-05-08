@@ -1,6 +1,7 @@
 package com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.service;
 
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowDTO;
+import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseFollowedByUserDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.dto.ResponseUserFollowersDTO;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.Post;
 import com.be_java_hisp_w26_g13.be_java_hisp_w26_g13.entity.User;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -109,6 +111,58 @@ public class UserServiceTest {
         );
         String expectedExceptionMessage = "Order should be name_asc or name_desc.";
         Assertions.assertEquals(expectedExceptionMessage, thrownException.getMessage());
+    }
+
+    @Test
+    @DisplayName("get followers list ordered by name asc")
+    public void ascFollowerListOrderIsRight(){
+        String orderAsc = "name_asc";
+        ResponseUserFollowersDTO mockedResponseUserFollowersDTO = CustomUtils.newResponseUserFollowersDTO(orderAsc);
+
+        Assertions.assertEquals(mockedResponseUserFollowersDTO, this.followersList(orderAsc));
+
+    }
+    @Test
+    @DisplayName("get followers list ordered by name desc")
+    public void descFollowerListOrderIsRight(){
+        String orderDesc = "name_desc";
+        ResponseUserFollowersDTO mockedResponseUserFollowersDTO = CustomUtils.newResponseUserFollowersDTO(orderDesc);
+
+        Assertions.assertEquals(mockedResponseUserFollowersDTO, this.followersList(orderDesc));
+
+    }
+
+    private ResponseUserFollowersDTO followersList(String order){
+        int userIdParam = 1;
+        User vendor = CustomUtils.newMockedVendor();
+        Mockito.when(userRepository.findById(userIdParam)).thenReturn(vendor);
+        return userService.getOrderedFollowersList(userIdParam, order);
+    }
+
+
+    @Test
+    @DisplayName("get followed list ordered by name asc")
+    public void ascFollowedListOrderIsRight(){
+        String orderAsc = "name_asc";
+        ResponseFollowedByUserDTO mockedResponseUserFollowersDTO = CustomUtils.newResponseFollowedByUserDTO(orderAsc);
+
+        Assertions.assertEquals(mockedResponseUserFollowersDTO, this.followedList(orderAsc));
+
+    }
+    @Test
+    @DisplayName("get followed list ordered by name desc")
+    public void descFollowedListOrderIsRight(){
+        String orderDesc = "name_desc";
+        ResponseFollowedByUserDTO mockedResponseUserFollowersDTO = CustomUtils.newResponseFollowedByUserDTO(orderDesc);
+
+        Assertions.assertEquals(mockedResponseUserFollowersDTO, this.followedList(orderDesc));
+    }
+
+    private ResponseFollowedByUserDTO followedList(String order){
+        int userIdParam = 16;
+        User user = CustomUtils.newMockedUserTwo();
+        Mockito.when(userRepository.findById(userIdParam)).thenReturn(user);
+        return userService.getOrderedFollowedSellers(userIdParam, order);
     }
 
     @Test
