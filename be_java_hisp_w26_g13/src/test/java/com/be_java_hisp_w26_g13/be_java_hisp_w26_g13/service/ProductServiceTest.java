@@ -65,38 +65,17 @@ public class ProductServiceTest {
     @Test
     @DisplayName("Verify that the date sorting type exists - Success")
     public void getPostByFollowedUsersTest() {
-        int userIdParam = 15;
         String order = "date_asc";
 
-        User mockedVendor = CustomUtils.newMockedVendor();
-        User mockedUser = CustomUtils.newMockedUser();
-
-        List<Post> mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostList();
-
-        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
-
-        Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
-                .thenReturn(mockedFollowedVendorsPostList);
-
-        Assertions.assertDoesNotThrow(()->productService.getPostByFollowedUsers(userIdParam,order));
+        Assertions.assertDoesNotThrow(()->followedPosts(order));
     }
+
     @Test
     @DisplayName("Verify that the date sorting type exists - Failure")
     public void getPostByFollowedUsersBadPathTest() {
-        int userIdParam = 15;
         String order = "error";
 
-        User mockedVendor = CustomUtils.newMockedVendor();
-        User mockedUser = CustomUtils.newMockedUser();
-
-        List<Post> mockedFollowedVendorsPostList = CustomUtils.newMockedFollowedVendorPostList();
-
-        Mockito.when(userRepository.findById(15)).thenReturn(mockedUser);
-
-        Mockito.when(postRepository.getPostBy(mockedVendor.getUserId()))
-                .thenReturn(mockedFollowedVendorsPostList);
-
-        Assertions.assertThrows(BadRequestException.class, ()->productService.getPostByFollowedUsers(userIdParam,order));
+        Assertions.assertThrows(BadRequestException.class, ()->followedPosts(order));
     }
 
     @Test
